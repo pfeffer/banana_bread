@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  components_mask: 1
+  quantity: 1
+
+two:
+  components_mask: 1
+  quantity: 1

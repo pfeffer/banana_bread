@@ -1,0 +1,75 @@
+<script type="text/template" id="bread-crumbs-template">
+
+<div id="bread-crumbs">
+	<span id='step1' class="<%%= step == 1 ? 'active' : '' %> enabled">Step 1</span> > 
+	<span id='step2' class="<%%= step == 2 ? 'active' : '' %><%%= max_step >= 2 ? ' enabled' : ' disabled' %>">Step 2</span> > 
+	<span id='step3' class="<%%= step == 3 ? 'active' : '' %><%%= max_step >= 3 ? ' enabled' : ' disabled' %>">Step 3</span>
+</div>
+
+</script>
+
+<script type="text/template" id="select-template">
+
+<table id="table">
+
+<tr>
+	<td class='left-column'>
+		<div id="bread-image">
+		</div>
+
+		<img alt="raisins" class='component-image<%%= components['raisins'] ? ' selected' : ''  %>' src="http://images.wikia.com/recipes/images/8/82/Raisins.jpg">
+		<img alt="chocolate chips" class='component-image<%%= components['chocolate chips'] ? ' selected' : ''  %>' src="http://www.cocktailfiesta.com/wp-content/uploads/2012/02/chocolate-chips.jpg">
+		<img alt="walnuts" class='component-image<%%= components['walnuts'] ? ' selected' : ''  %>' src="http://www.naturalhealth365.com/images/walnuts.jpg">
+		<img alt="flax seeds" class='component-image<%%= components['flax seeds'] ? ' selected' : ''  %>' src="http://everyoungshop.com/images/isimages/BW6212.jpg">
+		<img alt="cinnamon" class='component-image<%%= components['cinnamon'] ? ' selected' : ''  %>' src="http://www.7daykickstartdiet.com/wp-content/uploads/2011/05/cinnamonhealthbenefits.jpg">
+		
+	</td>
+	
+	<td class='right-column'>
+		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
+		<div id="quantity-control">
+			Quantity <br/>
+			<div id="quantity-plus" class="button plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
+			<div id="quantity-minus" class="button plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
+		</div>
+		
+		<div id="order-step">
+			<div id="step-button" class="button order">Step 2</div>
+			Next step: enter your address and payment info
+		</div>
+	</td>
+</tr>
+
+</table>
+
+</script>
+
+
+<script type="text/template" id="payment-template">
+
+<table id="table">
+
+<tr>
+	<td class='left-column'>
+	
+		<form>
+			<input type="radio" name="delivery-type" value="pickup" checked/> Pickup<br />
+			
+			<input type="radio" name="delivery-type" value="delivery" /> Delivery
+		</form>
+		
+	</td>
+	
+	<td class='right-column'>
+		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
+		
+		<div id="order-step">
+			<div id="step-button" class="button order">Review</div>
+			Next step: confirm your order
+		</div>
+	</td>
+</tr>
+
+</table>
+
+</script>

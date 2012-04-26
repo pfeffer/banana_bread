@@ -1,0 +1,143 @@
+// Place all the styles related to the orders controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "buttons";
+
+body {
+  background-color: #fff;
+  color: #333;
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 14px;
+}
+
+
+#wrap{
+	width: 960px;
+	margin: 10px auto 10px;
+	position: relative; 
+	background: grey;
+	padding: 10px;
+}
+
+#bread-crumbs{
+	font-size: 200%;
+	margin-bottom: 10px;
+	cursor: default;
+	span {
+		&.active{
+			font-weight: bold;
+		}
+		
+		&.enabled{
+			cursor: pointer;
+		}
+		
+		&.disabled{
+			color: #AAA;
+		}
+	}
+}
+
+$content-height: 400px;
+
+#table{
+	border-collapse:collapse;
+	width: 100%;
+	
+	tr {
+		//border: 1px solid black;
+	}
+	
+	td.left-column{
+		//width: 70%;
+		display: block;
+		//min-height: 150px;
+		position: relative;
+		padding: 0 20px 0 0;
+		vertical-align:top;
+		//line-height: 140%;
+		background: #CCC;
+	}
+	
+	td.right-column{
+		width: 25%;
+		background: #EEE;
+		color: #444;
+		padding: 10px;
+		vertical-align: top;
+	}
+	
+}
+
+
+#bread-image{
+	height: $content-height;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-image: url('http://2.bp.blogspot.com/_gLGOsirSkHc/TMi5OkI98RI/AAAAAAAANmQ/b20iE_IH3Yk/s1600/sliced%20banana%20bread.jpg');
+}
+
+.component-image{
+	max-height: 100px;
+	max-width: 100px;
+	//display: inline-block;
+	opacity: 0.4;
+	cursor: pointer;
+	
+	&.selected{
+		opacity: 1;
+	}
+}
+
+.selected-component{
+	font-weight: bold;
+}
+
+#quantity-control{
+	margin-top: 100px;
+}
+
+.button{
+	@include button;
+	@include rounded(5px);
+//	@include shadow;
+	@include gradient(#4D8CCD, #3372B4);
+	color: white;
+	font-size: 200%;
+	font-weight: bold;
+	
+	line-height: 2em;
+	
+	&:hover{
+		@include gradient(#3289B2, #297192);
+	}
+	
+	&:active{
+		@include shadow_inset;
+	}
+	
+	&.plus-minus{
+		padding: 0;
+		width: 2em;
+		height: 2em;
+	}
+	
+	&.order{
+		height: 2em;
+	}
+}
+
+#order-step{
+	margin-top: 100px;
+}
+
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
