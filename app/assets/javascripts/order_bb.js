@@ -24,7 +24,6 @@ bread.initOrderBackbone = function(){
 				if (s > this.get('max_step')) this.set('max_step', s, {silent: true});
 				this.set('step',s);
 			}
-				
 		},
 		quantity: function(){
 			return this.get('quantity');
@@ -127,7 +126,11 @@ bread.initOrderBackbone = function(){
 			"click #quantity-plus": 	"plusButtonHandler",
 			"click #quantity-minus": 	"minusButtonHandler",
 			"click .component-image": 	"componentImageHandler",
-			"click #step-button": 		"stepButtonHandler"
+			"click #step-button": 		"stepButtonHandler",
+			"change form input:radio":	"deliveryTypeHandler"
+		},
+		deliveryTypeHandler: function(event){
+			console.log(event.target);
 		},
 		breadCrumbsHandler: function(event){
 			var crumb = $(event.target);
@@ -151,6 +154,17 @@ bread.initOrderBackbone = function(){
 		},
 		extractStepFromString: function(str){
 			return +str.substring(str.length-1);
+		},
+		displayMap: function(){
+			console.log('2');
+			var myLatLng = new google.maps.LatLng(43.64225,-79.383591);
+			var options = {
+				center: myLatLng,
+				zoom: 12,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+
+			map = new google.maps.Map($('$pickup-map-canvas'), options);
 		}
 		
 	});

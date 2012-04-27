@@ -53,11 +53,17 @@
 	<td class='left-column'>
 	
 		<form>
-			<input type="radio" name="delivery-type" value="pickup" checked/> Pickup<br />
+			<div id="pickup">
+				<input type="radio" name="delivery-type" value="pickup" checked/> Pickup
+				<div id="pickup-map-canvas">
+				</div>
+			</div>
 			
-			<input type="radio" name="delivery-type" value="delivery" /> Delivery
+			<div id="delivery">
+				<input type="radio" name="delivery-type" value="delivery" /> Delivery
+				<div id="delivery-map">
+			</div>
 		</form>
-		
 	</td>
 	
 	<td class='right-column'>
