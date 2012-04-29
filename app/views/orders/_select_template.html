@@ -53,12 +53,12 @@
 	<td class='left-column'>
 	
 		<form>
-			<input type="radio" name="delivery-type" value="pickup" checked/> Pickup
+			<input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
 			</br>
-			<input type="radio" name="delivery-type" value="delivery" /> Delivery
+			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Delivery
 			<div id="delivery-address" style="display: none;">
 				<span>
- 					<input id="street-address" type="text">
+ 					<input id="street-address" type="text" value=<%%= delivery_address %>>
 					<label for="street-address">Street Address</label>
 				</span>
 			</div>

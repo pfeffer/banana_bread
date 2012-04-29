@@ -13,6 +13,8 @@ bread.initOrderBackbone = function(){
 			components: {},
 			step: 1,
 			max_step: 1,
+			delivery_type: 'pickup',	//1 - pickup, 2 - delivery
+			delivery_address: ''
 		},
 		initialize: function(obj){
 		},
@@ -85,6 +87,16 @@ bread.initOrderBackbone = function(){
 			function componentName(comp_name){
 				return "<span class='selected-component'>" + comp_name + "</span>";
 			}
+		},
+		setDeliveryAddress: function(address){
+			this.set('delivery_address', address, {silent: true});
+		},
+		deliveryType: function(){
+			return this.get('delivery_type');
+		},
+		setDeliveryType: function(d_type){
+			if (!d_type) return;
+			this.set('delivery_type', d_type, {silent: true});
 		}
 	});
 	
@@ -107,21 +119,21 @@ bread.initOrderBackbone = function(){
 			json.loaf = model.quantityText();
 			json.order_text = model.orderText();
 			var stepTemplate = null;
-			var initMap = false;
 			switch(model.step()){
 				case 1:
 					stepTemplate = this.selectTemplate( json );
 					break;
 				case 2:
 					stepTemplate = this.paymentTemplate( json );
-					initMap = true;
 					break;
 			}
 			
 			$(this.el).html(this.breadCrumbsTemplate(json));
 			$(this.el).append(stepTemplate);
 			
-			initMap && this.initializeMap();
+			this.initializeMapIfExists();
+			this.placeDeliveryMarker();
+			this.updateDeliveryView();
 			return this;
 		},
 		
@@ -131,16 +143,32 @@ bread.initOrderBackbone = function(){
 			"click #quantity-minus": 	"minusButtonHandler",
 			"click .component-image": 	"componentImageHandler",
 			"click #step-button": 		"stepButtonHandler",
-			"change form input:radio":	"deliveryTypeHandler"
+			"change form input:radio":	"deliveryTypeHandler",
+			"keyup #delivery-address":	"addressChangeHandler"
+			
+		},
+		isPickup: function(){
+			return this.model.deliveryType() == "pickup";
 		},
 		deliveryTypeHandler: function(event){
-			// console.log(event.target);
+			this.model.setDeliveryType($(event.target).val());
+			this.updateDeliveryView();
+		},
+		updateDeliveryView: function(){
+			
+			if(this.model.step() != 2) return;
 			var delivery_address = $("#delivery-address");
-			if ($(event.target).val() == "pickup" ){
+			if ( this.isPickup() ){
 				delivery_address.hide("slow");
+				this.home.circle.setMap(null);
+				this.deliveryMarker.setMap(null);
+				console.log(this.deliveryMarker.getPosition());
 			}else{
 				delivery_address.show("slow");
+				this.home.circle.setMap(this.map);
+				this.deliveryMarker.setMap(this.map);
 			}
+			
 		},
 		breadCrumbsHandler: function(event){
 			var crumb = $(event.target);
@@ -165,47 +193,81 @@ bread.initOrderBackbone = function(){
 		extractStepFromString: function(str){
 			return +str.substring(str.length-1);
 		},
-		initializeMap: function(){
-			this.myAddress = "51 lower simcoe, toronto, on";
-			this.myLatLng = new google.maps.LatLng(43.64225,-79.383591);
+		initializeMapIfExists: function(){
+			var map_div = $('#map-canvas')[0];
+			if (!map_div) return;
+			//this.myAddress = "51 lower simcoe, toronto, on";
+			//create map
+			var myLatLng = new google.maps.LatLng(43.64225,-79.383591);
 			var options = {
-				center: this.myLatLng,
+				center: myLatLng,
 				zoom: 12,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
-			this.map = new google.maps.Map($('#map-canvas').get(0), options);
-			this.geocoder = new google.maps.Geocoder();
+			this.map = new google.maps.Map(map_div, options);
 			
-			this.markersArray = [];
-			this.addMarker(this.myAddress, false, false);
+			//create home marker
+			this.home = new Object;
+			this.home.marker  = new google.maps.Marker({
+				map: this.map,
+				position: myLatLng
+			});
+			
+			var circleParams = {
+//				map: this.map,
+				radius: 4000,
+				fillColor: '#0000FF', 
+				strokeColor: '#0011FF',
+				strokeWeight: 0.5,
+				center: myLatLng
+			};
+			
+			this.home.circle = new google.maps.Circle(circleParams);
+			
+			//create delivery marker
+			if (!this.deliveryMarker) this.deliveryMarker = new google.maps.Marker({});
+			
+			//circle.bindTo('center', marker, 'position');
+			
+			
+			
+			//this.addMarker(this.myAddress, false, false);
 		},
-		addMarker: function(location, addCircle, addToMarkersArray){
-			this.geocoder.geocode({'address': location}, function(results, status){
+		placeDeliveryMarker: function(){
+			if ( this.isPickup() ) return;
+			var address = $('#street-address').val();
+			if(!address) return;
+			this.model.setDeliveryAddress(address);
+			address += ' toronto ontario canada';
+			
+			
+			if(!this.geocoder) this.geocoder = new google.maps.Geocoder();
+			
+			var map = this.map;
+			var deliveryMarker = this.deliveryMarker;
+			this.geocoder.geocode({'address': address}, function(results, status){
 				if (status == google.maps.GeocoderStatus.OK){
 					//bounds.extend(results[0].geometry.location);
 					//map.fitBounds(bounds);
-					var marker = new google.maps.Marker({
-						map: this.map,
-						position: results[0].geometry.location
-					});
-					console.log(marker+";"+ marker.position);
-					if (addToMarkersArray){
-						this.markersArray.push(marker);
-					}
-					if (addCircle){
-						var circleParams = {
-							map: this.map,
-							radius: 4000,
-							fillColor: '#0000FF', 
-							strokeColor: '#0011FF',
-							strokeWeight: 0.5
-						};
-						var circle = new google.maps.Circle(circleParams)
-						circle.bindTo('center', marker, 'position');
-					}
+					deliveryMarker.setPosition(results[0].geometry.location);
+					deliveryMarker.setMap(map);
 				}
 			});
-		}       
+		},
+		addressChangeHandler: function(){
+			//stop timer
+			if(this.inputTimer){
+				clearTimeout(this.inputTimer)
+				this.inputTimer = null;
+			} 
+			
+			var view = this;
+			var timerCallback = function(){
+				view.placeDeliveryMarker();
+			}
+			
+			this.inputTimer = setTimeout(timerCallback, 1000);
+		}
 		
 	});
 
