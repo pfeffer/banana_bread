@@ -107,17 +107,21 @@ bread.initOrderBackbone = function(){
 			json.loaf = model.quantityText();
 			json.order_text = model.orderText();
 			var stepTemplate = null;
+			var initMap = false;
 			switch(model.step()){
 				case 1:
 					stepTemplate = this.selectTemplate( json );
 					break;
 				case 2:
 					stepTemplate = this.paymentTemplate( json );
+					initMap = true;
 					break;
 			}
 			
 			$(this.el).html(this.breadCrumbsTemplate(json));
 			$(this.el).append(stepTemplate);
+			
+			initMap && this.initializeMap();
 			return this;
 		},
 		
@@ -130,7 +134,13 @@ bread.initOrderBackbone = function(){
 			"change form input:radio":	"deliveryTypeHandler"
 		},
 		deliveryTypeHandler: function(event){
-			console.log(event.target);
+			// console.log(event.target);
+			var delivery_address = $("#delivery-address");
+			if ($(event.target).val() == "pickup" ){
+				delivery_address.hide("slow");
+			}else{
+				delivery_address.show("slow");
+			}
 		},
 		breadCrumbsHandler: function(event){
 			var crumb = $(event.target);
@@ -155,17 +165,47 @@ bread.initOrderBackbone = function(){
 		extractStepFromString: function(str){
 			return +str.substring(str.length-1);
 		},
-		displayMap: function(){
-			console.log('2');
-			var myLatLng = new google.maps.LatLng(43.64225,-79.383591);
+		initializeMap: function(){
+			this.myAddress = "51 lower simcoe, toronto, on";
+			this.myLatLng = new google.maps.LatLng(43.64225,-79.383591);
 			var options = {
-				center: myLatLng,
+				center: this.myLatLng,
 				zoom: 12,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
-			}
-
-			map = new google.maps.Map($('$pickup-map-canvas'), options);
-		}
+			};
+			this.map = new google.maps.Map($('#map-canvas').get(0), options);
+			this.geocoder = new google.maps.Geocoder();
+			
+			this.markersArray = [];
+			this.addMarker(this.myAddress, false, false);
+		},
+		addMarker: function(location, addCircle, addToMarkersArray){
+			this.geocoder.geocode({'address': location}, function(results, status){
+				if (status == google.maps.GeocoderStatus.OK){
+					//bounds.extend(results[0].geometry.location);
+					//map.fitBounds(bounds);
+					var marker = new google.maps.Marker({
+						map: this.map,
+						position: results[0].geometry.location
+					});
+					console.log(marker+";"+ marker.position);
+					if (addToMarkersArray){
+						this.markersArray.push(marker);
+					}
+					if (addCircle){
+						var circleParams = {
+							map: this.map,
+							radius: 4000,
+							fillColor: '#0000FF', 
+							strokeColor: '#0011FF',
+							strokeWeight: 0.5
+						};
+						var circle = new google.maps.Circle(circleParams)
+						circle.bindTo('center', marker, 'position');
+					}
+				}
+			});
+		}       
 		
 	});
 
