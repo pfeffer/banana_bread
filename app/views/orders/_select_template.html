@@ -51,20 +51,26 @@
 
 <tr>
 	<td class='left-column'>
-	
-		<form>
+		<form method="post">
 			<input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
-			</br>
+			<br/>
 			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Delivery
-			<div id="delivery-address" style="display: none;">
-				<span>
- 					<input id="street-address" type="text" value=<%%= delivery_address %>>
-					<label for="street-address">Street Address</label>
-				</span>
+			<div id="delivery-address" style="display:none;">
+				<label for="street-address">Address:</label>
+				<input id="street-address" type="text" value=<%%= delivery_address %>>
+			</div>
+			<div id="delivery">
+				<div id="map-canvas"></div>
+				<div id="message">
+					<div id="delivery-message">
+					</div>
+					<div id="distance-message">
+					</div>
+					<div id="distance-message-error" class="red">
+					</div>
+				</div>
 			</div>
 		</form>
-		<div id="map-canvas">
-		</div>
 	</td>
 	
 	<td class='right-column'>
@@ -73,6 +79,44 @@
 		<div id="order-step">
 			<div id="step-button" class="button order">Review</div>
 			Next step: confirm your order
+		</div>
+	</td>
+</tr>
+
+</table>
+
+</script>
+
+
+<script type="text/template" id="review-template">
+
+<table id="table">
+
+<tr>
+	<td class='left-column'>
+		<div id="review-info">
+		</div>
+	</td>
+	
+	<td class='right-column'>
+		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
+		<div id="order-step">
+			<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+				<div id="payment">
+					<input type="hidden" name="cmd" value="_xclick">
+					<input type="hidden" name="business" value="7UWLEGTUETVWL">
+					<input type="hidden" name="item_name" value="banana bread">
+					<input type="hidden" name="quantity" value="<%%= quantity%>">				
+					<input type="hidden" name="lc" value="CA">
+					<input type="hidden" name="amount" value="20.00">
+					<input type="hidden" name="currency_code" value="CAD">
+					<input type="hidden" name="button_subtype" value="services">
+					<input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
+					<input type="hidden" name="return" value="http://localhost:3000/payment-complete/"> 
+					<input type="submit" class="button" value="Pay">
+					<div>You will be redirected to PayPal</div>
+				</div>
+			</form>
 		</div>
 	</td>
 </tr>

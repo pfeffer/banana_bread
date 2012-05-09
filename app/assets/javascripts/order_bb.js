@@ -2,7 +2,6 @@
 // # All this logic will automatically be available in application.js.
 // # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-
 bread.initOrderBackbone = function(){
 	
 	var componentsArray = [];
@@ -14,7 +13,8 @@ bread.initOrderBackbone = function(){
 			step: 1,
 			max_step: 1,
 			delivery_type: 'pickup',	//1 - pickup, 2 - delivery
-			delivery_address: ''
+			delivery_address: '',
+			delivery_distance: 0 // in metres
 		},
 		initialize: function(obj){
 		},
@@ -88,6 +88,9 @@ bread.initOrderBackbone = function(){
 				return "<span class='selected-component'>" + comp_name + "</span>";
 			}
 		},
+		deliveryAddress: function(){
+			return this.get('delivery_address');
+		},
 		setDeliveryAddress: function(address){
 			this.set('delivery_address', address, {silent: true});
 		},
@@ -97,6 +100,12 @@ bread.initOrderBackbone = function(){
 		setDeliveryType: function(d_type){
 			if (!d_type) return;
 			this.set('delivery_type', d_type, {silent: true});
+		},
+		deliveryDistance: function(){
+			return this.get('delivery_distance');
+		},
+		setDeliveryDistance: function(dist){
+			this.set('delivery_distance', dist, {silent: true})
 		}
 	});
 	
@@ -107,11 +116,11 @@ bread.initOrderBackbone = function(){
 
 		initialize: function() {
 			this.model.on('change', this.render, this);
-
 		},
 		breadCrumbsTemplate: 	_.template($('#bread-crumbs-template').html()),
 		selectTemplate: 		_.template($('#select-template').html()),
 		paymentTemplate: 		_.template($('#payment-template').html()),
+		reviewTemplate:			_.template($('#review-template').html()),
 		render: function( event ){
 			//console.log('render');
 			var model = this.model;
@@ -125,6 +134,9 @@ bread.initOrderBackbone = function(){
 					break;
 				case 2:
 					stepTemplate = this.paymentTemplate( json );
+					break;
+				case 3:
+					stepTemplate = this.reviewTemplate( json );
 					break;
 			}
 			
@@ -143,7 +155,7 @@ bread.initOrderBackbone = function(){
 			"click #quantity-minus": 	"minusButtonHandler",
 			"click .component-image": 	"componentImageHandler",
 			"click #step-button": 		"stepButtonHandler",
-			"change form input:radio":	"deliveryTypeHandler",
+			"change input:radio":	"deliveryTypeHandler",
 			"keyup #delivery-address":	"addressChangeHandler"
 			
 		},
@@ -155,20 +167,21 @@ bread.initOrderBackbone = function(){
 			this.updateDeliveryView();
 		},
 		updateDeliveryView: function(){
-			
 			if(this.model.step() != 2) return;
 			var delivery_address = $("#delivery-address");
+			var delivery_message;
 			if ( this.isPickup() ){
 				delivery_address.hide("slow");
 				this.home.circle.setMap(null);
 				this.deliveryMarker.setMap(null);
-				console.log(this.deliveryMarker.getPosition());
+				delivery_message = "Pickup from 1 to 9 pm";
 			}else{
 				delivery_address.show("slow");
 				this.home.circle.setMap(this.map);
 				this.deliveryMarker.setMap(this.map);
+				delivery_message = "Delivery from 9 am to 12 pm";
 			}
-			
+			$("#delivery-message").text(delivery_message);
 		},
 		breadCrumbsHandler: function(event){
 			var crumb = $(event.target);
@@ -188,6 +201,17 @@ bread.initOrderBackbone = function(){
 			this.model.updateComponent(component);
 		},
 		stepButtonHandler: function(){
+			if (this.model.step() == 2 && this.model.deliveryType() === "delivery"){
+				if(this.model.deliveryAddress() === ""){
+				//console.log("need address");
+					return;
+				};
+				var dist = this.model.deliveryDistance();
+				if(dist > 4500 ){
+					$('#distance-message-error').text("Distance is "+dist +". Too far to bike");
+					return;
+				}
+			};
 			this.model.setStep(this.model.step()+1);
 		},
 		extractStepFromString: function(str){
@@ -226,12 +250,8 @@ bread.initOrderBackbone = function(){
 			
 			//create delivery marker
 			if (!this.deliveryMarker) this.deliveryMarker = new google.maps.Marker({});
+			if (!this.distanceService) this.distanceService = new google.maps.DistanceMatrixService();
 			
-			//circle.bindTo('center', marker, 'position');
-			
-			
-			
-			//this.addMarker(this.myAddress, false, false);
 		},
 		placeDeliveryMarker: function(){
 			if ( this.isPickup() ) return;
@@ -240,17 +260,44 @@ bread.initOrderBackbone = function(){
 			this.model.setDeliveryAddress(address);
 			address += ' toronto ontario canada';
 			
-			
 			if(!this.geocoder) this.geocoder = new google.maps.Geocoder();
+			$('delivery-message-error').val('');
 			
+			var model = this.model;
 			var map = this.map;
 			var deliveryMarker = this.deliveryMarker;
+			var homeMarker = this.home.marker;
+			var distanceService = this.distanceService;
 			this.geocoder.geocode({'address': address}, function(results, status){
 				if (status == google.maps.GeocoderStatus.OK){
 					//bounds.extend(results[0].geometry.location);
 					//map.fitBounds(bounds);
 					deliveryMarker.setPosition(results[0].geometry.location);
 					deliveryMarker.setMap(map);
+					
+					distanceService.getDistanceMatrix({
+						origins: [homeMarker.getPosition()],
+						destinations: [deliveryMarker.getPosition()],
+						travelMode: google.maps.TravelMode.DRIVING,
+						avoidHighways: true,
+						avoidTolls: true
+					}, function(response, status){
+						if (status == google.maps.DistanceMatrixStatus.OK){
+							var origins = response.originAddresses;
+							var destinations = response.destinationAddresses;
+							for (var i=0; i< origins.length; i++){
+								var rows = response.rows[i];
+								for (var j=0; j<destinations.length; j++)
+								{
+									var element = rows.elements[j];
+									if (element.status == google.maps.DistanceMatrixStatus.OK){
+										$("#distance-message").text("Distance:" + element.distance.text);
+										model.setDeliveryDistance(element.distance.value);
+									}
+								}
+							}
+						}
+					});
 				}
 			});
 		},

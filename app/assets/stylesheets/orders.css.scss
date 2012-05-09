@@ -13,7 +13,7 @@ body {
 
 
 #wrap{
-	width: 960px;
+	width: 960px;	
 	margin: 10px auto 10px;
 	position: relative; 
 	background: grey;
@@ -142,7 +142,26 @@ $content-height: 400px;
 	height: 0;
 }
 
-#map-canvas{
-	width: 400px;
+#delivery{
 	height: 300px;
+}
+
+#map-canvas{
+	float: left;
+	width: 49%;
+	height: 100%;
+}
+
+#message{
+	float: right;
+	width: 49%;
+	height: 70%;
+	background: #cdcdcd;
+	border: 1px dashed;
+	border-radius: 5px;
+	text-align: right;
+}
+
+.red{
+	color:red;
 }
