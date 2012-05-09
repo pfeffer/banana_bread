@@ -95,6 +95,7 @@
 <tr>
 	<td class='left-column'>
 		<div id="review-info">
+			You chose <%%= delivery_type %>.
 		</div>
 	</td>
 	
@@ -113,6 +114,7 @@
 					<input type="hidden" name="button_subtype" value="services">
 					<input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
 					<input type="hidden" name="return" value="http://localhost:3000/payment-complete/"> 
+					<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
 					<input type="submit" class="button" value="Pay">
 					<div>You will be redirected to PayPal</div>
 				</div>

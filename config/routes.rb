@@ -1,6 +1,11 @@
 Bread::Application.routes.draw do
   
+  #get "payment_notifications/create"
+
   resources :orders
+  resources :payment_notifications
+  
+  match 'paypal_encrypt' => "orders#paypal_encrypt", :via => [:get, :post]
   
   root :to => 'orders#index'
 
