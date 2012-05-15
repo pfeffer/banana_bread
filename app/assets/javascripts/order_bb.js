@@ -56,6 +56,16 @@ bread.initOrderBackbone = function(){
 			components[c] = !components[c];
 			this.trigger("change");
 		},
+		saveOrder: function(){
+			//$.post("/orders", {quantity: model.quantity, is_delivery: delivery_type == 'delivery', })	
+			$.ajax({url: "/orders", 
+					data: this.attributes,
+					type: 'POST',
+					dataType: 'json',
+					success: function(data) { alert("Success!"); this.setStep(3);},
+					error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
+			})
+		},
 		orderText: function(){
 			var component_text = '';
 			var componentsHash = this.get('components');
@@ -137,6 +147,8 @@ bread.initOrderBackbone = function(){
 					break;
 				case 3:
 					stepTemplate = this.reviewTemplate( json );
+					//save order
+					model.saveOrder();
 					break;
 			}
 			

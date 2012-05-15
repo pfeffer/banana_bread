@@ -40,17 +40,28 @@ class OrdersController < ApplicationController
   # POST /orders
   # POST /orders.json
   def create
-    @order = Order.new(params[:order])
+		components = params[:components]
+		is_delivery = params[:delivery_type] == 'delivery'
+		delivery_address = params[:delivery_address]
+		quantity = params[:quantity]
+		
+    @order = Order.create!( components_mask: components, is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity )
+    
+    render :json => @order
+    
+    # respond_to do |format|
+    #       format.js {redirect_to "thank_you"}
+    #     end
 
-    respond_to do |format|
-      if @order.save
-        format.html { redirect_to @order, notice: 'Order was successfully created.' }
-        format.json { render json: @order, status: :created, location: @order }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
-      end
-    end
+    # respond_to do |format|
+    #       if @order.save
+    #         format.html { redirect_to @order, notice: 'Order was successfully created.' }
+    #         format.json { render json: @order, status: :created, location: @order }
+    #       else
+    #         format.html { render action: "new" }
+    #         format.json { render json: @order.errors, status: :unprocessable_entity }
+    #       end
+    #     end
   end
 
   # PUT /orders/1
