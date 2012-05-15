@@ -40,7 +40,7 @@ class OrdersController < ApplicationController
   # POST /orders
   # POST /orders.json
   def create
-		components = params[:components]
+		components = params[:components][:walnuts]
 		is_delivery = params[:delivery_type] == 'delivery'
 		delivery_address = params[:delivery_address]
 		quantity = params[:quantity]

@@ -14,7 +14,8 @@ bread.initOrderBackbone = function(){
 			max_step: 1,
 			delivery_type: 'pickup',	//1 - pickup, 2 - delivery
 			delivery_address: '',
-			delivery_distance: 0 // in metres
+			delivery_distance: 0, // in metres
+			order_id: 0
 		},
 		initialize: function(obj){
 		},
@@ -26,6 +27,12 @@ bread.initOrderBackbone = function(){
 				if (s > this.get('max_step')) this.set('max_step', s, {silent: true});
 				this.set('step',s);
 			}
+		},
+		orderId: function(){
+			return this.get('order_id');
+		},
+		setOrderId: function(id){
+			this.set('order_id', id)
 		},
 		quantity: function(){
 			return this.get('quantity');
@@ -58,11 +65,18 @@ bread.initOrderBackbone = function(){
 		},
 		saveOrder: function(){
 			//$.post("/orders", {quantity: model.quantity, is_delivery: delivery_type == 'delivery', })	
+			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
+			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
+			var model = this;
 			$.ajax({url: "/orders", 
 					data: this.attributes,
 					type: 'POST',
 					dataType: 'json',
-					success: function(data) { alert("Success!"); this.setStep(3);},
+					success: function(data) { 
+						alert("Success!"); 
+						model.setStep(3); 
+						model.setOrderId(data.id);
+						console.log(data);},
 					error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
 			})
 		},
@@ -147,8 +161,6 @@ bread.initOrderBackbone = function(){
 					break;
 				case 3:
 					stepTemplate = this.reviewTemplate( json );
-					//save order
-					model.saveOrder();
 					break;
 			}
 			
@@ -213,18 +225,22 @@ bread.initOrderBackbone = function(){
 			this.model.updateComponent(component);
 		},
 		stepButtonHandler: function(){
-			if (this.model.step() == 2 && this.model.deliveryType() === "delivery"){
-				if(this.model.deliveryAddress() === ""){
-				//console.log("need address");
-					return;
+			if (this.model.step() == 2){
+				if (this.model.deliveryType() === "delivery"){
+					if(this.model.deliveryAddress() === ""){
+					//console.log("need address");
+						return;
+					};
+					var dist = this.model.deliveryDistance();
+					if(dist > 4500 ){
+						$('#distance-message-error').text("Distance is "+dist +". Too far to bike");
+						return;
+					}
 				};
-				var dist = this.model.deliveryDistance();
-				if(dist > 4500 ){
-					$('#distance-message-error').text("Distance is "+dist +". Too far to bike");
-					return;
-				}
-			};
-			this.model.setStep(this.model.step()+1);
+				this.model.saveOrder();
+			}else{
+				this.model.setStep(this.model.step()+1);
+			}
 		},
 		extractStepFromString: function(str){
 			return +str.substring(str.length-1);

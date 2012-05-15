@@ -96,6 +96,7 @@
 	<td class='left-column'>
 		<div id="review-info">
 			You chose <%%= delivery_type %>.
+			Order number is <%%= order_id %>
 		</div>
 	</td>
 	
@@ -110,11 +111,12 @@
 					<input type="hidden" name="quantity" value="<%%= quantity%>">				
 					<input type="hidden" name="lc" value="CA">
 					<input type="hidden" name="amount" value="20.00">
-					<input type="hidden" name="currency_code" value="CAD">
+					<input type="hidden" name="currency_code" value="USD">
+					<input type="hidden" name="invoice" value="<%%= order_id%>">
 					<input type="hidden" name="button_subtype" value="services">
 					<input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
-					<input type="hidden" name="return" value="http://localhost:3000/payment-complete/"> 
-					<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
+					<input type="hidden" name="return" value="http://localhost:3000/thank_you/"> 
+					<input type="hidden" name="notify_url" value='http://marakujja.zapto.org/payment_notifications'> 
 					<input type="submit" class="button" value="Pay">
 					<div>You will be redirected to PayPal</div>
 				</div>

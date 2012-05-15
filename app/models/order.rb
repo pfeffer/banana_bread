@@ -1,3 +1,3 @@
 class Order < ActiveRecord::Base
-  serialize :components
+  #serialize :components
 end
