@@ -1,5 +1,3 @@
-var casper = require('casper').create();
-
 casper.start('http://localhost:3000/', function() {
     this.click('.order');
 });
@@ -18,5 +16,5 @@ casper.then(function() {
 });
 
 casper.run(function() {
-    this.test.renderResults(true);
+    this.test.done();
 });
