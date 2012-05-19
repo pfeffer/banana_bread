@@ -5,6 +5,16 @@ casper.start('http://localhost:3000/', function() {
 casper.then(function() {
     this.test.assertTextExists('You are about to order 1 Banana bread loaf with chocolate chips.');
     this.test.assert(this.evaluate(function() { return $("[alt=\"chocolate chips\"]").hasClass("selected"); }));
+    this.click('[alt="chocolate chips"]');
+});
+
+casper.then(function() {
+    this.test.assertTextExists('You are about to order 1 Banana bread loaf.');
+    this.test.assertNot(this.evaluate(function() { return $("[alt=\"chocolate chips\"]").hasClass("selected"); }));
+    this.click('[alt="chocolate chips"]');    
+});
+
+casper.then(function() {
     this.click('.order');
 });
 
