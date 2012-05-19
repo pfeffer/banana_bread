@@ -5,3 +5,10 @@
 require File.expand_path('../config/application', __FILE__)
 
 Bread::Application.load_tasks
+
+namespace :test do
+  desc "Run acceptance tests."
+  task :acceptance do
+    exec("casperjs test/run_acceptance.js test/acceptance")
+  end
+end
