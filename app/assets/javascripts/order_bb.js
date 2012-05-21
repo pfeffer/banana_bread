@@ -15,7 +15,8 @@ bread.initOrderBackbone = function(){
 			delivery_type: 'pickup',	//1 - pickup, 2 - delivery
 			delivery_address: '',
 			delivery_distance: 0, // in metres
-			order_id: 0
+			order_id: 0,
+			paypal_encrypted: ''
 		},
 		initialize: function(obj){
 		},
@@ -75,7 +76,8 @@ bread.initOrderBackbone = function(){
 					success: function(data) { 
 						alert("Success!"); 
 						model.setStep(3); 
-						model.setOrderId(data.id);
+						model.setOrderId(data.order_id);
+						model.setPaypalEncrypted(data.paypal_encrypted_str);
 						console.log(data);},
 					error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
 			})
@@ -130,6 +132,9 @@ bread.initOrderBackbone = function(){
 		},
 		setDeliveryDistance: function(dist){
 			this.set('delivery_distance', dist, {silent: true})
+		}, 
+		setPaypalEncrypted: function(s){
+			this.set('paypal_encrypted', s)
 		}
 	});
 	

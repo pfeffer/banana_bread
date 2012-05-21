@@ -7,6 +7,8 @@ class PaymentNotification < ActiveRecord::Base
     def mark_order_as_purchased
       if status == "Completed"
         order.update_attribute(:purchased_at, Time.now)
+        
+        OrderMailer.email_order("UserName", "masha.ku@gmail.com", order)
       end
     end
 end

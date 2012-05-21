@@ -103,21 +103,13 @@
 	<td class='right-column'>
 		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
 		<div id="order-step">
+		
 			<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
 				<div id="payment">
-					<input type="hidden" name="cmd" value="_xclick">
-					<input type="hidden" name="business" value="7UWLEGTUETVWL">
-					<input type="hidden" name="item_name" value="banana bread">
-					<input type="hidden" name="quantity" value="<%%= quantity%>">				
-					<input type="hidden" name="lc" value="CA">
-					<input type="hidden" name="amount" value="20.00">
-					<input type="hidden" name="currency_code" value="USD">
-					<input type="hidden" name="invoice" value="<%%= order_id%>">
-					<input type="hidden" name="button_subtype" value="services">
-					<input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
-					<input type="hidden" name="return" value="http://localhost:3000/thank_you/"> 
-					<input type="hidden" name="notify_url" value='http://marakujja.zapto.org/payment_notifications'> 
+					<input type="hidden" name="cmd" value="_s-xclick">
+					<input type="hidden" name="encrypted" value="<%%= paypal_encrypted %>">
 					<input type="submit" class="button" value="Pay">
+									
 					<div>You will be redirected to PayPal</div>
 				</div>
 			</form>

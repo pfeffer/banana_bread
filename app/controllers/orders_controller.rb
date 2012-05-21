@@ -47,12 +47,9 @@ class OrdersController < ApplicationController
 		
     @order = Order.create!( components_mask: components, is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity )
     
-    render :json => @order
+    #render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, payment_notifications_url)}
+    render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, 'http://marakujja.zapto.org/payment_notifications')}
     
-    # respond_to do |format|
-    #       format.js {redirect_to "thank_you"}
-    #     end
-
     # respond_to do |format|
     #       if @order.save
     #         format.html { redirect_to @order, notice: 'Order was successfully created.' }
