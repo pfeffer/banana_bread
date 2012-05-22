@@ -6,6 +6,8 @@ class CreateOrders < ActiveRecord::Migration
       t.integer :is_delivery
       t.string  :delivery_address
       t.datetime :purchased_at
+      t.string :user_name
+      t.string :user_email
 
       t.timestamps
     end

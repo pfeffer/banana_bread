@@ -44,8 +44,12 @@ class OrdersController < ApplicationController
 		is_delivery = params[:delivery_type] == 'delivery'
 		delivery_address = params[:delivery_address]
 		quantity = params[:quantity]
+		user_name = params[:user_name]
+		user_email = params[:user_email]
 		
-    @order = Order.create!( components_mask: components, is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity )
+		puts "saving the order..."
+		
+    @order = Order.create!( components_mask: components, is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity, user_name: user_name, user_email: user_email )
     
     #render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, payment_notifications_url)}
     render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, 'http://marakujja.zapto.org/payment_notifications')}

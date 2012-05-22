@@ -1,10 +1,9 @@
 class OrderMailer < ActionMailer::Base
   default from: "masha.ku@gmail.com"
   
-  def email_order(user_name, user_email, order)
-    @user_name = user_name
+  def email_order(order)
     @order = order
     
-    mail(to: user_email, subject: "Your order of banana bread").deliver
+    mail(to: order.user_email, bcc: "masha.ku@gmail.com", subject: "Your order of banana bread").deliver
   end
 end

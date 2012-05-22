@@ -16,7 +16,9 @@ bread.initOrderBackbone = function(){
 			delivery_address: '',
 			delivery_distance: 0, // in metres
 			order_id: 0,
-			paypal_encrypted: ''
+			paypal_encrypted: '',
+			user_email: '',
+			user_name: ''
 		},
 		initialize: function(obj){
 		},
@@ -69,17 +71,18 @@ bread.initOrderBackbone = function(){
 			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
 			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
 			var model = this;
+			console.log(this.get('user_name') +"; "+model.get('user_email')+";"+model.get('quantity'));
 			$.ajax({url: "/orders", 
-					data: this.attributes,
-					type: 'POST',
-					dataType: 'json',
-					success: function(data) { 
-						alert("Success!"); 
-						model.setStep(3); 
-						model.setOrderId(data.order_id);
-						model.setPaypalEncrypted(data.paypal_encrypted_str);
-						console.log(data);},
-					error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
+				data: this.attributes,
+				type: 'POST',
+				dataType: 'json',
+				success: function(data) { 
+					alert("Success!"); 
+					model.setStep(3); 
+					model.setOrderId(data.order_id);
+					model.setPaypalEncrypted(data.paypal_encrypted_str);
+					console.log(data);},
+				error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
 			})
 		},
 		orderText: function(){
@@ -131,10 +134,19 @@ bread.initOrderBackbone = function(){
 			return this.get('delivery_distance');
 		},
 		setDeliveryDistance: function(dist){
-			this.set('delivery_distance', dist, {silent: true})
+			this.set('delivery_distance', dist, {silent: true});
 		}, 
 		setPaypalEncrypted: function(s){
-			this.set('paypal_encrypted', s)
+			this.set('paypal_encrypted', s);
+		},
+		setUserName: function(s){
+			console.log(s);
+			console.log(typeof(s));
+			this.set('user_name', s, {silent: true});
+		},
+		setUserEmail: function(s){
+			console.log(s);
+			this.set('user_email', s, {silent: true});
 		}
 	});
 	
@@ -185,8 +197,9 @@ bread.initOrderBackbone = function(){
 			"click .component-image": 	"componentImageHandler",
 			"click #step-button": 		"stepButtonHandler",
 			"change input:radio":	"deliveryTypeHandler",
-			"keyup #delivery-address":	"addressChangeHandler"
-			
+			"keyup #delivery-address":	"addressChangeHandler",
+			"blur #user_name": "userNameChangeHandler",
+			"blur #user_email": "userEmailChangeHandler" 
 		},
 		isPickup: function(){
 			return this.model.deliveryType() == "pickup";
@@ -347,8 +360,14 @@ bread.initOrderBackbone = function(){
 			}
 			
 			this.inputTimer = setTimeout(timerCallback, 1000);
+		},
+		userNameChangeHandler: function(){
+			var str = $("#user_name").val();
+			this.model.setUserName(str);
+		},
+		userEmailChangeHandler: function(){
+			this.model.setUserEmail($("#user_email").val());
 		}
-		
 	});
 
 	

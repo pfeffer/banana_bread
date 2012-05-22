@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(:version => 20120509181340) do
     t.integer  "is_delivery"
     t.string   "delivery_address"
     t.datetime "purchased_at"
+    t.string   "user_name"
+    t.string   "user_email"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
   end

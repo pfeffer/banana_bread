@@ -109,6 +109,7 @@ $content-height: 400px;
 	font-weight: bold;
 	
 	line-height: 2em;
+	opacity: 1;
 	
 	&:hover{
 		@include gradient(#3289B2, #297192);
@@ -126,6 +127,10 @@ $content-height: 400px;
 	
 	&.order{
 		height: 2em;
+	}
+	
+	&.disabled{
+		opacity: 0.4;
 	}
 }
 

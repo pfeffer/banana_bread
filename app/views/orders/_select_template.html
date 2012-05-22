@@ -52,6 +52,13 @@
 <tr>
 	<td class='left-column'>
 		<form method="post">
+			Your name:
+			<input id="user_name" name="user_name" type="text" placeholder="First and last name"/>
+			<br/>
+			Your email:
+			<input id="user_email" name="user_email" type="email" placeholder="banana@bread.com"/>
+			<br/>
+			
 			<input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
 			<br/>
 			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Delivery
