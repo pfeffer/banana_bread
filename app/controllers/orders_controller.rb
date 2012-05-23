@@ -47,7 +47,8 @@ class OrdersController < ApplicationController
 		user_name = params[:user_name]
 		user_email = params[:user_email]
 		
-		puts "saving the order..."
+		puts "saving the order...."
+		puts ENV['BREAD_EMAIL_USERNAME']
 		
     @order = Order.create!( components_mask: components, is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity, user_name: user_name, user_email: user_email )
     
