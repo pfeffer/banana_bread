@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(:version => 20120509181340) do
     t.datetime "purchased_at"
     t.string   "user_name"
     t.string   "user_email"
+    t.string   "user_phone"
+    t.string   "user_comment"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
   end

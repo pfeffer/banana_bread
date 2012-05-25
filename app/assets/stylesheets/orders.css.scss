@@ -170,3 +170,20 @@ $content-height: 400px;
 .red{
 	color:red;
 }
+
+.form-ul{
+	text-align:left;
+	list-style-type:none;
+	padding: 1px;
+}
+
+.form-label{
+	display: inline-block;
+	width:110px;
+	vertical-align:top;
+}
+
+textarea{
+	resize: none;
+	overflow:hidden;
+}

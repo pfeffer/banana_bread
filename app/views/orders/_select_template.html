@@ -52,19 +52,37 @@
 <tr>
 	<td class='left-column'>
 		<form method="post">
-			Your name:
-			<input id="user_name" name="user_name" type="text" placeholder="First and last name"/>
-			<br/>
-			Your email:
-			<input id="user_email" name="user_email" type="email" placeholder="banana@bread.com"/>
-			<br/>
+			<ul class="form-ul">
+			<li>
+				<span class="form-label">Your name:</span>
+				<input id="user-name" name="user-name" type="text" placeholder="First and last name" value="<%%= user_name %>"/>
+			</li>
+			<li>
+				<span class="form-label">Your email:</span>
+				<input id="user-email" name="user-email" type="email" placeholder="banana@bread.com" value="<%%= user_email%>"/>
+			</li>
+			<li>
+				<span class="form-label">Comment:</span>
+				<textarea id="user-comment" name="user-comment">
+					<%%= user_comment%>
+				</textarea>
+			</li>
+			</ul>
 			
 			<input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
 			<br/>
 			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Delivery
 			<div id="delivery-address" style="display:none;">
-				<label for="street-address">Address:</label>
-				<input id="street-address" type="text" value=<%%= delivery_address %>>
+				<ul class="form-ul">
+				<li>
+					<span class="form-label">Your address:</span>
+					<input id="street-address" type="text" value="<%%= delivery_address %>">
+				</li>
+				<li>
+					<span class="form-label">Your phone #:</span>
+					<input id="user_phone" type="text" value=<%%= user_phone%>>
+				</li>
+				</ul>
 			</div>
 			<div id="delivery">
 				<div id="map-canvas"></div>

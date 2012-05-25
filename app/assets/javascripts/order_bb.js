@@ -18,7 +18,9 @@ bread.initOrderBackbone = function(){
 			order_id: 0,
 			paypal_encrypted: '',
 			user_email: '',
-			user_name: ''
+			user_name: '',
+			user_comment: '',
+			user_phone: ''
 		},
 		initialize: function(obj){
 		},
@@ -81,7 +83,7 @@ bread.initOrderBackbone = function(){
 					model.setStep(3); 
 					model.setOrderId(data.order_id);
 					model.setPaypalEncrypted(data.paypal_encrypted_str);
-					console.log(data);},
+					},
 				error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
 			})
 		},
@@ -140,13 +142,16 @@ bread.initOrderBackbone = function(){
 			this.set('paypal_encrypted', s);
 		},
 		setUserName: function(s){
-			console.log(s);
-			console.log(typeof(s));
 			this.set('user_name', s, {silent: true});
 		},
 		setUserEmail: function(s){
-			console.log(s);
 			this.set('user_email', s, {silent: true});
+		},
+		setUserComment: function(s){
+			this.set('user_comment', s, {silent: true});
+		},
+		setUserPhone: function(s){
+			this.set('user_phone', s, {silent: true});
 		}
 	});
 	
@@ -163,7 +168,6 @@ bread.initOrderBackbone = function(){
 		paymentTemplate: 		_.template($('#payment-template').html()),
 		reviewTemplate:			_.template($('#review-template').html()),
 		render: function( event ){
-			//console.log('render');
 			var model = this.model;
 			var json = model.toJSON();
 			json.loaf = model.quantityText();
@@ -198,8 +202,10 @@ bread.initOrderBackbone = function(){
 			"click #step-button": 		"stepButtonHandler",
 			"change input:radio":	"deliveryTypeHandler",
 			"keyup #delivery-address":	"addressChangeHandler",
-			"blur #user_name": "userNameChangeHandler",
-			"blur #user_email": "userEmailChangeHandler" 
+			"blur #user-name": "userNameChangeHandler",
+			"blur #user-email": "userEmailChangeHandler",
+			"blur #user-comment": "userCommentChangeHandler", 
+			"blur #user-pohone": "userPhoneChangeHandler" 
 		},
 		isPickup: function(){
 			return this.model.deliveryType() == "pickup";
@@ -246,7 +252,6 @@ bread.initOrderBackbone = function(){
 			if (this.model.step() == 2){
 				if (this.model.deliveryType() === "delivery"){
 					if(this.model.deliveryAddress() === ""){
-					//console.log("need address");
 						return;
 					};
 					var dist = this.model.deliveryDistance();
@@ -362,11 +367,17 @@ bread.initOrderBackbone = function(){
 			this.inputTimer = setTimeout(timerCallback, 1000);
 		},
 		userNameChangeHandler: function(){
-			var str = $("#user_name").val();
+			var str = $("#user-name").val();
 			this.model.setUserName(str);
 		},
 		userEmailChangeHandler: function(){
-			this.model.setUserEmail($("#user_email").val());
+			this.model.setUserEmail($("#user-email").val());
+		},
+		userCommentChangeHandler: function(){
+			this.model.setUserComment($("#user-comment").val());
+		},
+		userPhoneChangeHandler: function(){
+			this.model.setUserPhone($("#user-phone").val());
 		}
 	});
 
