@@ -2,14 +2,19 @@
 // # All this logic will automatically be available in application.js.
 // # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-bread.initOrderBackbone = function(){
-	
+bread.initOrderBackbone = function() {
 	var componentsArray = [];
 	
 	bread.OrderModel = Backbone.Model.extend({
 		defaults: {
 			quantity: 1,
-			components: {},
+			components: {
+			    "raisins": false,
+			    "chocolate chips": false,
+    		    "walnuts": false,
+    		    "flax seeds": false,
+    		    "cinnamon": false
+			},
 			step: 1,
 			max_step: 1,
 			delivery_type: 'pickup',	//1 - pickup, 2 - delivery
@@ -22,8 +27,14 @@ bread.initOrderBackbone = function(){
 			user_comment: '',
 			user_phone: ''
 		},
-		initialize: function(obj){
+		availableComponents: {
+		    "raisins": "http://images.wikia.com/recipes/images/8/82/Raisins.jpg",
+		    "chocolate chips": "http://www.cocktailfiesta.com/wp-content/uploads/2012/02/chocolate-chips.jpg",
+		    "walnuts": "http://www.naturalhealth365.com/images/walnuts.jpg",
+		    "flax seeds": "http://everyoungshop.com/images/isimages/BW6212.jpg",
+		    "cinnamon": "http://www.7daykickstartdiet.com/wp-content/uploads/2011/05/cinnamonhealthbenefits.jpg"    		
 		},
+		initialize: function() {},
 		step: function() {
 			return this.get('step');
 		},
@@ -57,18 +68,12 @@ bread.initOrderBackbone = function(){
 		quantityText: function(){
 			return this.quantity() == 1 ? "loaf" : "loaves";			
 		},
-		setComponents: function(cs){
-			var components = {};
-			for(var i=0; i < cs.length; i++) components[cs[i]] = false;
-			this.set('components', components);
-			componentsArray = cs;
-		},
 		updateComponent: function(c){
-			var components = this.get('components');
+			var components = this.get("components");
 			components[c] = !components[c];
 			this.trigger("change");
 		},
-		saveOrder: function(){
+		saveOrder: function() {
 			//$.post("/orders", {quantity: model.quantity, is_delivery: delivery_type == 'delivery', })	
 			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
 			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
@@ -87,17 +92,15 @@ bread.initOrderBackbone = function(){
 				error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
 			})
 		},
-		orderText: function(){
+		orderText: function() {
 			var component_text = '';
-			var componentsHash = this.get('components');
+
+			var selected_elements = _.reduce(this.get("components"), function(components, selected, name) {
+			    if(selected) { components.push(name); }
+			    return components;
+			}, []);
 			
-			var selected_elements = [];
-			for(var i=0; i < componentsArray.length; i++){
-				if(componentsHash[componentsArray[i]]) selected_elements.push(componentsArray[i]);
-			}
-			
-			
-			if(selected_elements.length > 0){
+			if(selected_elements.length > 0) {
 				component_text = componentName(selected_elements[selected_elements.length-1]);
 
 				//b and c
@@ -158,30 +161,34 @@ bread.initOrderBackbone = function(){
 	bread.OrderView = Backbone.View.extend({
 		tagName: "div",
 
-		// className: "order",
+		el: $("#order-wizard"),
 
 		initialize: function() {
 			this.model.on('change', this.render, this);
+			this.render();
 		},
 		breadCrumbsTemplate: 	_.template($('#bread-crumbs-template').html()),
 		selectTemplate: 		_.template($('#select-template').html()),
 		paymentTemplate: 		_.template($('#payment-template').html()),
 		reviewTemplate:			_.template($('#review-template').html()),
-		render: function( event ){
-			var model = this.model;
-			var json = model.toJSON();
-			json.loaf = model.quantityText();
-			json.order_text = model.orderText();
+		render: function() {
+			var json = this.model.toJSON();
+			_.extend(json, {
+			    loaf: this.model.quantityText(),
+			    order_text: this.model.orderText(),
+			    availableComponents: this.model.availableComponents
+			});
 			var stepTemplate = null;
-			switch(model.step()){
+			
+			switch(this.model.step()) {
 				case 1:
-					stepTemplate = this.selectTemplate( json );
+					stepTemplate = this.selectTemplate(json);
 					break;
 				case 2:
-					stepTemplate = this.paymentTemplate( json );
+					stepTemplate = this.paymentTemplate(json);
 					break;
 				case 3:
-					stepTemplate = this.reviewTemplate( json );
+					stepTemplate = this.reviewTemplate(json);
 					break;
 			}
 			
@@ -191,7 +198,6 @@ bread.initOrderBackbone = function(){
 			this.initializeMapIfExists();
 			this.placeDeliveryMarker();
 			this.updateDeliveryView();
-			return this;
 		},
 		
 		events: {
@@ -380,6 +386,4 @@ bread.initOrderBackbone = function(){
 			this.model.setUserPhone($("#user-phone").val());
 		}
 	});
-
-	
-}
+};
