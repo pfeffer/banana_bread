@@ -1,10 +1,4 @@
-// # Place all the behaviors and hooks related to the matching controller here.
-// # All this logic will automatically be available in application.js.
-// # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
-
 bread.initOrderBackbone = function() {
-	var componentsArray = [];
-	
 	bread.OrderModel = Backbone.Model.extend({
 		defaults: {
 			quantity: 1,
@@ -48,7 +42,7 @@ bread.initOrderBackbone = function() {
 			return this.get('order_id');
 		},
 		setOrderId: function(id){
-			this.set('order_id', id)
+			this.set('order_id', id);
 		},
 		quantity: function(){
 			return this.get('quantity');
@@ -88,12 +82,15 @@ bread.initOrderBackbone = function() {
 					model.setStep(3); 
 					model.setOrderId(data.order_id);
 					model.setPaypalEncrypted(data.paypal_encrypted_str);
-					},
-				error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
-			})
+				},
+				error: function (xhr, status) { alert('Sorry, there was a problem!'); }
+			});
 		},
 		orderText: function() {
-			var component_text = '';
+			var componentText = '',
+			    componentName = function(comp_name) {
+			        return "<span class='selected-component'>" + comp_name + "</span>"
+			    };
 
 			var selected_elements = _.reduce(this.get("components"), function(components, selected, name) {
 			    if(selected) { components.push(name); }
@@ -101,26 +98,22 @@ bread.initOrderBackbone = function() {
 			}, []);
 			
 			if(selected_elements.length > 0) {
-				component_text = componentName(selected_elements[selected_elements.length-1]);
+				componentText = componentName(selected_elements[selected_elements.length-1]);
 
 				//b and c
 				//a, b and c
 				var second_last_component = selected_elements.length-2;
 				for(var i = second_last_component; i >= 0; i--){
 					if(i == second_last_component){
-						component_text = componentName(selected_elements[i]) + " and " + component_text;
+						componentText = componentName(selected_elements[i]) + " and " + componentText;
 					} else {
-						component_text = componentName(selected_elements[i]) + ", " + component_text;
+						componentText = componentName(selected_elements[i]) + ", " + componentText;
 					}
 				}
 
-				component_text = " with " + component_text;
+				componentText = " with " + componentText;
 			}
-			return component_text;
-
-			function componentName(comp_name){
-				return "<span class='selected-component'>" + comp_name + "</span>";
-			}
+			return componentText;
 		},
 		deliveryAddress: function(){
 			return this.get('delivery_address');
@@ -157,7 +150,7 @@ bread.initOrderBackbone = function() {
 			this.set('user_phone', s, {silent: true});
 		}
 	});
-	
+
 	bread.OrderView = Backbone.View.extend({
 		tagName: "div",
 
@@ -202,12 +195,12 @@ bread.initOrderBackbone = function() {
 		
 		events: {
 			"click #bread-crumbs span": "breadCrumbsHandler",
-			"click #quantity-plus": 	"plusButtonHandler",
-			"click #quantity-minus": 	"minusButtonHandler",
-			"click .component-image": 	"componentImageHandler",
-			"click #step-button": 		"stepButtonHandler",
-			"change input:radio":	"deliveryTypeHandler",
-			"keyup #delivery-address":	"addressChangeHandler",
+			"click #quantity-plus": "plusButtonHandler",
+			"click #quantity-minus": "minusButtonHandler",
+			"click .component-image": "componentImageHandler",
+			"click #step-button": "stepButtonHandler",
+			"change input:radio": "deliveryTypeHandler",
+			"keyup #delivery-address": "addressChangeHandler",
 			"blur #user-name": "userNameChangeHandler",
 			"blur #user-email": "userEmailChangeHandler",
 			"blur #user-comment": "userCommentChangeHandler", 
