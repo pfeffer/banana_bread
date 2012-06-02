@@ -21,8 +21,6 @@
 //= require orders
 
 
-bread.prepare = function(){
-	
+bread.prepare = function(){	
 	bread.orderStart();
-}
-
+};
