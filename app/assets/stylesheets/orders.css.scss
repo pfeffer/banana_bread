@@ -7,7 +7,7 @@
 body {
   background-color: #fff;
   color: #333;
-  font-family: verdana, arial, helvetica, sans-serif;
+  font-family: "Trebuchet MS", verdana, arial, helvetica, sans-serif;
   font-size: 14px;
 }
 
@@ -67,9 +67,7 @@ $content-height: 400px;
 		padding: 10px;
 		vertical-align: top;
 	}
-	
 }
-
 
 #bread-image{
 	height: $content-height;
