@@ -1,0 +1,16 @@
+src_files:
+  - vendor/assets/javascripts/underscore-min.js
+  - vendor/assets/javascripts/backbone-min.js
+  - vendor/assets/javascripts/jquery-min.js
+  - app/assets/javascripts/bread.js
+  - app/assets/javascripts/application.js
+  - app/assets/javascripts/order_bb.js
+  - app/assets/javascripts/orders.js
+stylesheets:
+  - stylesheets/**/*.css
+helpers:
+  - helpers/**/*.js
+spec_files:
+  - '**/*[sS]pec.js'
+src_dir: 
+spec_dir: test/javascripts

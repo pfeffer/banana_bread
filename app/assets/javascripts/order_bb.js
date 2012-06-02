@@ -1,15 +1,14 @@
-// # Place all the behaviors and hooks related to the matching controller here.
-// # All this logic will automatically be available in application.js.
-// # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
-
-bread.initOrderBackbone = function(){
-	
-	var componentsArray = [];
-	
+bread.initOrderBackbone = function() {
 	bread.OrderModel = Backbone.Model.extend({
 		defaults: {
 			quantity: 1,
-			components: {},
+			components: {
+			    "raisins": false,
+			    "chocolate chips": false,
+    		    "walnuts": false,
+    		    "flax seeds": false,
+    		    "cinnamon": false
+			},
 			step: 1,
 			max_step: 1,
 			delivery_type: 'pickup',	//1 - pickup, 2 - delivery
@@ -22,8 +21,14 @@ bread.initOrderBackbone = function(){
 			user_comment: '',
 			user_phone: ''
 		},
-		initialize: function(obj){
+		availableComponents: {
+		    "raisins": "http://images.wikia.com/recipes/images/8/82/Raisins.jpg",
+		    "chocolate chips": "http://www.cocktailfiesta.com/wp-content/uploads/2012/02/chocolate-chips.jpg",
+		    "walnuts": "http://www.naturalhealth365.com/images/walnuts.jpg",
+		    "flax seeds": "http://everyoungshop.com/images/isimages/BW6212.jpg",
+		    "cinnamon": "http://www.7daykickstartdiet.com/wp-content/uploads/2011/05/cinnamonhealthbenefits.jpg"    		
 		},
+		initialize: function() {},
 		step: function() {
 			return this.get('step');
 		},
@@ -37,7 +42,7 @@ bread.initOrderBackbone = function(){
 			return this.get('order_id');
 		},
 		setOrderId: function(id){
-			this.set('order_id', id)
+			this.set('order_id', id);
 		},
 		quantity: function(){
 			return this.get('quantity');
@@ -57,18 +62,12 @@ bread.initOrderBackbone = function(){
 		quantityText: function(){
 			return this.quantity() == 1 ? "loaf" : "loaves";			
 		},
-		setComponents: function(cs){
-			var components = {};
-			for(var i=0; i < cs.length; i++) components[cs[i]] = false;
-			this.set('components', components);
-			componentsArray = cs;
-		},
 		updateComponent: function(c){
-			var components = this.get('components');
+			var components = this.get("components");
 			components[c] = !components[c];
 			this.trigger("change");
 		},
-		saveOrder: function(){
+		saveOrder: function() {
 			//$.post("/orders", {quantity: model.quantity, is_delivery: delivery_type == 'delivery', })	
 			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
 			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
@@ -83,41 +82,38 @@ bread.initOrderBackbone = function(){
 					model.setStep(3); 
 					model.setOrderId(data.order_id);
 					model.setPaypalEncrypted(data.paypal_encrypted_str);
-					},
-				error:  function (xhr, status) {alert ('Sorry, there was a problem!')}
-			})
+				},
+				error: function (xhr, status) { alert('Sorry, there was a problem!'); }
+			});
 		},
-		orderText: function(){
-			var component_text = '';
-			var componentsHash = this.get('components');
+		orderText: function() {
+			var componentText = '',
+			    componentName = function(comp_name) {
+			        return "<span class='selected-component'>" + comp_name + "</span>"
+			    };
+
+			var selected_elements = _.reduce(this.get("components"), function(components, selected, name) {
+			    if(selected) { components.push(name); }
+			    return components;
+			}, []);
 			
-			var selected_elements = [];
-			for(var i=0; i < componentsArray.length; i++){
-				if(componentsHash[componentsArray[i]]) selected_elements.push(componentsArray[i]);
-			}
-			
-			
-			if(selected_elements.length > 0){
-				component_text = componentName(selected_elements[selected_elements.length-1]);
+			if(selected_elements.length > 0) {
+				componentText = componentName(selected_elements[selected_elements.length-1]);
 
 				//b and c
 				//a, b and c
 				var second_last_component = selected_elements.length-2;
 				for(var i = second_last_component; i >= 0; i--){
 					if(i == second_last_component){
-						component_text = componentName(selected_elements[i]) + " and " + component_text;
+						componentText = componentName(selected_elements[i]) + " and " + componentText;
 					} else {
-						component_text = componentName(selected_elements[i]) + ", " + component_text;
+						componentText = componentName(selected_elements[i]) + ", " + componentText;
 					}
 				}
 
-				component_text = " with " + component_text;
+				componentText = " with " + componentText;
 			}
-			return component_text;
-
-			function componentName(comp_name){
-				return "<span class='selected-component'>" + comp_name + "</span>";
-			}
+			return componentText;
 		},
 		deliveryAddress: function(){
 			return this.get('delivery_address');
@@ -154,34 +150,38 @@ bread.initOrderBackbone = function(){
 			this.set('user_phone', s, {silent: true});
 		}
 	});
-	
+
 	bread.OrderView = Backbone.View.extend({
 		tagName: "div",
 
-		// className: "order",
+		el: $("#order-wizard"),
 
 		initialize: function() {
 			this.model.on('change', this.render, this);
+			this.render();
 		},
 		breadCrumbsTemplate: 	_.template($('#bread-crumbs-template').html()),
 		selectTemplate: 		_.template($('#select-template').html()),
 		paymentTemplate: 		_.template($('#payment-template').html()),
 		reviewTemplate:			_.template($('#review-template').html()),
-		render: function( event ){
-			var model = this.model;
-			var json = model.toJSON();
-			json.loaf = model.quantityText();
-			json.order_text = model.orderText();
+		render: function() {
+			var json = this.model.toJSON();
+			_.extend(json, {
+			    loaf: this.model.quantityText(),
+			    order_text: this.model.orderText(),
+			    availableComponents: this.model.availableComponents
+			});
 			var stepTemplate = null;
-			switch(model.step()){
+			
+			switch(this.model.step()) {
 				case 1:
-					stepTemplate = this.selectTemplate( json );
+					stepTemplate = this.selectTemplate(json);
 					break;
 				case 2:
-					stepTemplate = this.paymentTemplate( json );
+					stepTemplate = this.paymentTemplate(json);
 					break;
 				case 3:
-					stepTemplate = this.reviewTemplate( json );
+					stepTemplate = this.reviewTemplate(json);
 					break;
 			}
 			
@@ -191,17 +191,16 @@ bread.initOrderBackbone = function(){
 			this.initializeMapIfExists();
 			this.placeDeliveryMarker();
 			this.updateDeliveryView();
-			return this;
 		},
 		
 		events: {
 			"click #bread-crumbs span": "breadCrumbsHandler",
-			"click #quantity-plus": 	"plusButtonHandler",
-			"click #quantity-minus": 	"minusButtonHandler",
-			"click .component-image": 	"componentImageHandler",
-			"click #step-button": 		"stepButtonHandler",
-			"change input:radio":	"deliveryTypeHandler",
-			"keyup #delivery-address":	"addressChangeHandler",
+			"click #quantity-plus": "plusButtonHandler",
+			"click #quantity-minus": "minusButtonHandler",
+			"click .component-image": "componentImageHandler",
+			"click #step-button": "stepButtonHandler",
+			"change input:radio": "deliveryTypeHandler",
+			"keyup #delivery-address": "addressChangeHandler",
 			"blur #user-name": "userNameChangeHandler",
 			"blur #user-email": "userEmailChangeHandler",
 			"blur #user-comment": "userCommentChangeHandler", 
@@ -380,6 +379,4 @@ bread.initOrderBackbone = function(){
 			this.model.setUserPhone($("#user-phone").val());
 		}
 	});
-
-	
-}
+};
