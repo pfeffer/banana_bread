@@ -16,17 +16,25 @@ bread.initOrderBackbone = function() {
 			delivery_distance: 0, // in metres
 			order_id: 0,
 			paypal_encrypted: '',
-			user_email: '',
 			user_name: '',
+			user_email: '',
 			user_comment: '',
-			user_phone: ''
+			user_phone: '',
+			order_validity_mask: 0xf,
+			valid_fields: {
+				"user_name": "",
+				"user_email": "",
+				"street_address": "",
+				"user_phone":""
+			},
+			is_order_valid: false
 		},
 		availableComponents: {
 		    "raisins": "http://images.wikia.com/recipes/images/8/82/Raisins.jpg",
 		    "chocolate chips": "http://www.cocktailfiesta.com/wp-content/uploads/2012/02/chocolate-chips.jpg",
 		    "walnuts": "http://www.naturalhealth365.com/images/walnuts.jpg",
 		    "flax seeds": "http://everyoungshop.com/images/isimages/BW6212.jpg",
-		    "cinnamon": "http://www.7daykickstartdiet.com/wp-content/uploads/2011/05/cinnamonhealthbenefits.jpg"    		
+		    "cinnamon": "http://www.7daykickstartdiet.com/wp-content/uploads/2011/05/cinnamonhealthbenefits.jpg"
 		},
 		initialize: function() {},
 		step: function() {
@@ -60,7 +68,7 @@ bread.initOrderBackbone = function() {
 			this.set('quantity', q);
 		},
 		quantityText: function(){
-			return this.quantity() == 1 ? "loaf" : "loaves";			
+			return this.quantity() == 1 ? "loaf" : "loaves";
 		},
 		updateComponent: function(c){
 			var components = this.get("components");
@@ -72,7 +80,16 @@ bread.initOrderBackbone = function() {
 			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
 			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
 			var model = this;
-			console.log(this.get('user_name') +"; "+model.get('user_email')+";"+model.get('quantity'));
+			
+			var components = this.get("components");
+			var msk = 0;
+			msk |= components["raisins"] ? bread.F_RAISINS : 0;
+			msk |= components["chocolate chips"] ? bread.F_CHOC_CHIPS : 0;
+			msk |= components["walnuts"] ? bread.F_WALNUTS : 0;
+			msk |= components["flax seeds"] ? bread.F_FLAX_SEEDS : 0;
+			msk |= components["cinnamon"] ? bread.F_CINNAMON : 0;
+			
+			_.extend(model.attributes, {components_mask: msk});
 			$.ajax({url: "/orders", 
 				data: this.attributes,
 				type: 'POST',
@@ -92,8 +109,8 @@ bread.initOrderBackbone = function() {
 			        return "<span class='selected-component'>" + comp_name + "</span>"
 			    };
 
-			var selected_elements = _.reduce(this.get("components"), function(components, selected, name) {
-			    if(selected) { components.push(name); }
+			var selected_elements = _.reduce(this.get("components"), function(components, isSelected, name) {
+			    if(isSelected) { components.push(name); }
 			    return components;
 			}, []);
 			
@@ -148,7 +165,72 @@ bread.initOrderBackbone = function() {
 		},
 		setUserPhone: function(s){
 			this.set('user_phone', s, {silent: true});
-		}
+		},
+		isNameValid: function(){
+			var txt = "";
+			if (this.get("user_name") ===""){
+				txt = "Please enter your name";
+				//set name bit
+			}
+			//else{
+				//clear name bit
+				//return "";
+			//}
+			this.setErrorMessage("user_name", txt);
+			return txt === "";
+		},
+		isEmailValid: function(){
+			var txt = "";
+			var email = this.get("user_email");
+			if (email ===""){
+				txt = "Email cannot be blank";
+			}else{
+				regex = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+/;
+				if (!regex.test(email)){
+					txt =  "Email is invalid";
+				}else{
+					txt =  "";
+				}
+			}
+			this.setErrorMessage("user_email", txt);
+			return txt === "";
+		},
+		isPhoneValid: function(){
+			var txt = ""
+			if (this.get("delivery_type") !== "pickup"){
+				if (this.get("user_phone") === ""){
+					txt = "Please enter your phone number";
+				}
+			}
+			this.setErrorMessage("user_phone", txt);
+			return txt === "";
+		},
+		isAddressValid: function(){
+			var txt = "";
+			if (this.get("delivery_type") !== "pickup"){
+				if (this.get("delivery_address") === ""){
+					txt = "Please delivery address";
+				}else if (this.get("delivery_distance") > 4500){
+					txt = "Distance to your place is " + (+this.get("delivery_distance"))/1000 + "km. Please select our pick up option.";
+				}
+			}
+			this.setErrorMessage("street_address", txt);
+			return txt === "";
+		},
+		setErrorMessage: function(field_name, txt){
+			var vf = this.get("valid_fields");
+			vf[field_name] = txt;
+			this.set("valid_fields", vf, {silent: true});
+		},
+		isOrderValid: function(){
+			var name_valid = this.isNameValid();
+			var email_valid = this.isEmailValid();
+			var phone_valid = this.isPhoneValid();
+			var address_valid = this.isAddressValid();
+			
+			return name_valid && email_valid && phone_valid && address_valid;
+			//return order_validity_mask == 0
+		},
 	});
 
 	bread.OrderView = Backbone.View.extend({
@@ -158,6 +240,7 @@ bread.initOrderBackbone = function() {
 
 		initialize: function() {
 			this.model.on('change', this.render, this);
+			//this.model.on('change:is_form_valid', this.setReviewButton);
 			this.render();
 		},
 		breadCrumbsTemplate: 	_.template($('#bread-crumbs-template').html()),
@@ -204,7 +287,7 @@ bread.initOrderBackbone = function() {
 			"blur #user-name": "userNameChangeHandler",
 			"blur #user-email": "userEmailChangeHandler",
 			"blur #user-comment": "userCommentChangeHandler", 
-			"blur #user-pohone": "userPhoneChangeHandler" 
+			"blur #user-phone": "userPhoneChangeHandler" 
 		},
 		isPickup: function(){
 			return this.model.deliveryType() == "pickup";
@@ -215,6 +298,8 @@ bread.initOrderBackbone = function() {
 		},
 		updateDeliveryView: function(){
 			if(this.model.step() != 2) return;
+			$("#user-name").focus();
+			
 			var delivery_address = $("#delivery-address");
 			var delivery_message;
 			if ( this.isPickup() ){
@@ -234,6 +319,9 @@ bread.initOrderBackbone = function() {
 			var crumb = $(event.target);
 			if (crumb.hasClass('enabled') && !crumb.hasClass('active')){
 				var step = this.extractStepFromString(crumb.text());
+				if (this.model.step() === 2){
+					//validateForm();
+				}
 				this.model.setStep(step);
 			}
 		},
@@ -249,17 +337,18 @@ bread.initOrderBackbone = function() {
 		},
 		stepButtonHandler: function(){
 			if (this.model.step() == 2){
-				if (this.model.deliveryType() === "delivery"){
-					if(this.model.deliveryAddress() === ""){
-						return;
-					};
-					var dist = this.model.deliveryDistance();
-					if(dist > 4500 ){
-						$('#distance-message-error').text("Distance is "+dist +". Too far to bike");
-						return;
-					}
-				};
-				this.model.saveOrder();
+				// if (this.model.deliveryType() === "delivery"){
+				// 					var dist = this.model.deliveryDistance();
+				// 					if(dist > 4500 ){
+				// 						$('#distance-message-error').text("Distance is "+dist +". Too far to bike");
+				// 						return;
+				// 					}
+				// 				};
+				if (this.model.isOrderValid()){
+					this.model.saveOrder();
+				}else{
+					this.render();
+				}
 			}else{
 				this.model.setStep(this.model.step()+1);
 			}
@@ -366,8 +455,7 @@ bread.initOrderBackbone = function() {
 			this.inputTimer = setTimeout(timerCallback, 1000);
 		},
 		userNameChangeHandler: function(){
-			var str = $("#user-name").val();
-			this.model.setUserName(str);
+			this.model.setUserName($("#user-name").val());
 		},
 		userEmailChangeHandler: function(){
 			this.model.setUserEmail($("#user-email").val());
@@ -377,6 +465,6 @@ bread.initOrderBackbone = function() {
 		},
 		userPhoneChangeHandler: function(){
 			this.model.setUserPhone($("#user-phone").val());
-		}
+		},
 	});
 };

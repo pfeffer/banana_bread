@@ -30,7 +30,7 @@
 		</div>
 		
 		<div id="order-step">
-			<div id="step-button" class="button order">Step 2</div>
+			<div id="step-button" class="button order">Next</div>
 			Next step: enter your address and payment info
 		</div>
 	</td>
@@ -50,33 +50,35 @@
 		<form method="post">
 			<ul class="form-ul">
 			<li>
-				<span class="form-label">Your name:</span>
+				<span class="form-label">Name</span>
 				<input id="user-name" name="user-name" type="text" placeholder="First and last name" value="<%%= user_name %>"/>
+				<span id="user-name-error" class="error-message"><%%= valid_fields["user_name"]%></span>
 			</li>
 			<li>
-				<span class="form-label">Your email:</span>
+				<span class="form-label">Email</span>
 				<input id="user-email" name="user-email" type="email" placeholder="banana@bread.com" value="<%%= user_email%>"/>
+				<span id="user-email-error" class="error-message"><%%= valid_fields["user_email"]%></span>
 			</li>
 			<li>
-				<span class="form-label">Comment:</span>
-				<textarea id="user-comment" name="user-comment" rows="5" cols="50">
-					<%%= user_comment%>
-				</textarea>
+				<span class="form-label">Comment</span>
+				<textarea id="user-comment" name="user-comment" rows="5" cols="50"><%%= user_comment%></textarea>
 			</li>
 			</ul>
 			
 			<input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
 			<br/>
-			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Delivery
+			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Bike Delivery
 			<div id="delivery-address" style="display:none;">
 				<ul class="form-ul">
 				<li>
-					<span class="form-label">Your address:</span>
+					<span class="form-label">Address</span>
 					<input id="street-address" type="text" value="<%%= delivery_address %>">
+					<span id="street-address-error" class="error-message"><%%= valid_fields["street_address"]%></span>
 				</li>
 				<li>
-					<span class="form-label">Your phone #:</span>
-					<input id="user_phone" type="text" value=<%%= user_phone%>>
+					<span class="form-label">Phone #:</span>
+					<input id="user-phone" type="text" value=<%%= user_phone%>>
+					<span id="user-phone-error" class="error-message"><%%= valid_fields["user_phone"]%></span>
 				</li>
 				</ul>
 			</div>
@@ -116,8 +118,16 @@
 <tr>
 	<td class='left-column'>
 		<div id="review-info">
-			You chose <%%= delivery_type %>.
-			Order number is <%%= order_id %>
+			<h4>Dear <%%=user_name%>,</h4>
+			<p>Please review your order.</p>
+			<span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span></p>
+			
+			<p><%%= (delivery_type==="pickup") ? 
+				"Please, pick up your order during the day on the coming Saturday from 9:00 to 3:00"
+			   : "Your order is going to be delivered on the coming Saturday from 3:00 PM to 7:00 PM"
+			 %>
+			</p>
+			// Order number is <%%= order_id %>
 		</div>
 	</td>
 	

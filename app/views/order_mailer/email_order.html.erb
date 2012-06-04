@@ -7,8 +7,10 @@
     <h1>Welcome to bananabread.com, <%= @order.user_name %></h1>
     
     <p>
-	  Thank you for your purchase!
-      Your order # <%= @order.id %> is going to be delivered soon.
+		Thank you for placing an order with us!
+		
+		You ordered Banana Bread <%= order.getComponentsStr %>.
+		Your order # <%= @order.id %> is going to be delivered soon.
     </p>
   </body>
 </html>

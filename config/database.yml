@@ -1,9 +1,13 @@
 development:
-    adapter: sqlite3
+    adapter: postgresql
     encoding: unicode
     database: bread_db_dev
+    username: mk
+    pool: 5
 
 test:
-    adapter: sqlite3
+    adapter: postgresql
     encoding: unicode
     database: bread_db_test
+    username: mk
+    pool: 5

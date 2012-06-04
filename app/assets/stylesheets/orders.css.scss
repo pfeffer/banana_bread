@@ -3,14 +3,15 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 @import "buttons";
+@import "bootstrap";
 
 body {
   background-color: #fff;
+  background-image:url('page_bg_tile.jpg');
   color: #333;
   font-family: "Trebuchet MS", verdana, arial, helvetica, sans-serif;
   font-size: 14px;
 }
-
 
 #wrap{
 	width: 960px;	
@@ -169,6 +170,10 @@ $content-height: 400px;
 	color:red;
 }
 
+.error-message{
+	color:red;
+}
+
 .form-ul{
 	text-align:left;
 	list-style-type:none;
@@ -177,7 +182,7 @@ $content-height: 400px;
 
 .form-label{
 	display: inline-block;
-	width:110px;
+	width:80px;
 	vertical-align:top;
 }
 

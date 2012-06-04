@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(:version => 20120509181340) do
 
   create_table "orders", :force => true do |t|
-    t.string   "components_mask"
+    t.integer  "components_mask"
     t.integer  "quantity"
     t.integer  "is_delivery"
     t.string   "delivery_address"
