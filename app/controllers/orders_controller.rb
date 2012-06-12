@@ -41,7 +41,7 @@ class OrdersController < ApplicationController
   # POST /orders.json
   def create
     if request.xhr?
-  		comp_mask = params[:components_mask]
+  		comps = params[:components]
   		is_delivery = params[:delivery_type] == 'delivery'
   		delivery_address = params[:delivery_address]
   		quantity = params[:quantity]
@@ -49,8 +49,10 @@ class OrdersController < ApplicationController
   		user_email = params[:user_email]
   		user_phone = params[:user_phone]
   		user_comment = params[:user_comment]
-		
-      @order = Order.create!( components_mask: comp_mask, is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity, user_name: user_name, user_email: user_email, user_phone: user_phone, user_comment: user_comment)
+  		
+      @order = Order.create!( raisins: comps['raisins'] == 'true', chocolate_chips: comps['chocolate_chips'] == 'true', walnuts: comps['walnuts'] == 'true', flax_seeds: comps['flax seeds'], cinnamon: comps['cinnamon'],
+        is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity, 
+        user_name: user_name, user_email: user_email, user_phone: user_phone, user_comment: user_comment)
     
       #render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, payment_notifications_url)}
       render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, 'http://marakujja.zapto.org/payment_notifications')}

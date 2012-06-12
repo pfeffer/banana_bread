@@ -1,13 +1,13 @@
 bread.initOrderBackbone = function() {
-	bread.OrderModel = Backbone.Model.extend({
-		defaults: {
-			quantity: 1,
-			components: {
-			    "raisins": false,
-			    "chocolate chips": false,
-    		    "walnuts": false,
-    		    "flax seeds": false,
-    		    "cinnamon": false
+  bread.OrderModel = Backbone.Model.extend({
+    defaults: {
+      quantity: 1,
+      components: {
+        "raisins": false,
+        "chocolate chips": false,
+        "walnuts": false,
+        "flax seeds": false,
+        "cinnamon": false
 			},
 			step: 1,
 			max_step: 1,
@@ -20,7 +20,6 @@ bread.initOrderBackbone = function() {
 			user_email: '',
 			user_comment: '',
 			user_phone: '',
-			order_validity_mask: 0xf,
 			valid_fields: {
 				"user_name": "",
 				"user_email": "",
@@ -80,16 +79,8 @@ bread.initOrderBackbone = function() {
 			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
 			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
 			var model = this;
-			
-			var components = this.get("components");
-			var msk = 0;
-			msk |= components["raisins"] ? bread.F_RAISINS : 0;
-			msk |= components["chocolate chips"] ? bread.F_CHOC_CHIPS : 0;
-			msk |= components["walnuts"] ? bread.F_WALNUTS : 0;
-			msk |= components["flax seeds"] ? bread.F_FLAX_SEEDS : 0;
-			msk |= components["cinnamon"] ? bread.F_CINNAMON : 0;
-			
-			_.extend(model.attributes, {components_mask: msk});
+						
+			//_.extend(model.attributes, {components_json: model.get("components").toJSON()});
 			$.ajax({url: "/orders", 
 				data: this.attributes,
 				type: 'POST',

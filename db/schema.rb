@@ -14,15 +14,19 @@
 ActiveRecord::Schema.define(:version => 20120509181340) do
 
   create_table "orders", :force => true do |t|
-    t.integer  "components_mask"
     t.integer  "quantity"
-    t.integer  "is_delivery"
+    t.boolean  "is_delivery"
     t.string   "delivery_address"
     t.datetime "purchased_at"
     t.string   "user_name"
     t.string   "user_email"
     t.string   "user_phone"
     t.string   "user_comment"
+    t.boolean  "raisins"
+    t.boolean  "chocolate_chips"
+    t.boolean  "walnuts"
+    t.boolean  "flax_seeds"
+    t.boolean  "cinnamon"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
   end

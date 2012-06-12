@@ -32,6 +32,7 @@ class Order < ActiveRecord::Base
   end
   
   def encrypt_paypal(return_url, notify_url)
+    #24.212.225.107
     values = {
        :business => 'mkmk_1335799555_biz@mail.ru',
        :cmd => '_xclick',
@@ -58,34 +59,11 @@ class Order < ActiveRecord::Base
     OpenSSL::PKCS7::encrypt([OpenSSL::X509::Certificate.new(PAYPAL_CERT_PEM)], signed.to_der, OpenSSL::Cipher::Cipher::new("DES3"), OpenSSL::PKCS7::BINARY).to_s.gsub("\n", "")
   end
    
-  def getComponentsStr
-    selected_components = Array.new
-    
-    (self.components_mask && F_RAISINS) && selected_components.push("raisins")
-    (self.components_mask && F_CHOC_CHIPS) && selected_components.push("chocolate chips")
-    (self.components_mask && F_WALNUTS) && selected_components.push("walnuts")
-    (self.components_mask && F_FLAX_SEEDS) && selected_components.push("flax seeds")
-    (self.components_mask && F_CINNAMON) && selected_components.push("cinamon")
-    
-    if selected_components.length > 0
-      txt = componentName(selected_components[selected_components.length-1]);
-      
-      #b and c
-      #a, b and c
-      second_last_component = selected_components.length-2;
-      second_last_component.downto(0) {|i|
-        if i == second_last_component
-          componentText = componentName(selected_components[i]) + " and " + txt
-        else
-          componentText = componentName(selected_components[i]) + ", " + txt
-        end
-      }
-      componentText = " with " + componentText
-    end
-    return componentText
-  end
-  
-  def componentName(comp_name)
-    return "<span class='selected-component'>" + comp_name + "</span>"
+  def get_selected_components
+    components.push('raisins') && self.raisins
+    components.push('chocolate chips') && self.chocolate_chips
+    components.push('walnuts') && self.walnuts
+    components.push('flax seeds') && self.flax_seeds
+    components.push('cinnamon') && self.cinnamon
   end
 end
