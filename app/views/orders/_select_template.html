@@ -1,153 +1,167 @@
 <script type="text/template" id="bread-crumbs-template">
 
-<div id="bread-crumbs">
-	<span id='step1' class="<%%= step == 1 ? 'active' : '' %> enabled">Step 1</span> > 
-	<span id='step2' class="<%%= step == 2 ? 'active' : '' %><%%= max_step >= 2 ? ' enabled' : ' disabled' %>">Step 2</span> > 
-	<span id='step3' class="<%%= step == 3 ? 'active' : '' %><%%= max_step >= 3 ? ' enabled' : ' disabled' %>">Step 3</span>
+<div id="row">
+    <div id="bread-crumbs">
+    	<span id='step1' class="<%%= step == 1 ? 'active' : '' %> enabled">Step 1</span> <i class="icon-arrow-right"></i>
+    	<span id='step2' class="<%%= step == 2 ? 'active' : '' %><%%= max_step >= 2 ? ' enabled' : ' disabled' %>">Step 2</span> <i class="icon-arrow-right"></i> 
+    	<span id='step3' class="<%%= step == 3 ? 'active' : '' %><%%= max_step >= 3 ? ' enabled' : ' disabled' %>">Step 3</span>
+    </div>
 </div>
-
+    
 </script>
 
 <script type="text/template" id="select-template">
+    <div class="row">
+        <div class="span8">
+            <div class="row">
+                <div class="span8">
+                    <div class="alert alert-block">
+                        Place an order for delicious banana bread with your choice of ingredients and if you can't pick up your goodies at my location, I'll bike it right to you (within 5 km from the CN-tower).
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span7">
+                    <div id="bread-image"></div>
+                    <%% _.each(availableComponents, function(url, name) { %>
+                        <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
+                    <%% }); %>
+                </div>
+                <div class="span1">
+                    <div id="quantity-plus" class="btn btn-primary plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
+                    <p class="quantity"><%%= quantity%></p>
+                    <div id="quantity-minus" class="btn btn-primary plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="span4">
+            <div class="sidebar">
+                <p id="order-text" class="lead">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+        		<div class="well">
+        		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
+        		</div>
+    		</div>
 
-<table id="table">
-
-<tr>
-	<td class="left-column">
-		<div id="bread-image"></div>
-
-    <%% _.each(availableComponents, function(url, name) { %>
-      <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
-    <%% }); %>		
-	</td>
-	
-	<td class="right-column">
-		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
-		<div id="quantity-control">
-			Quantity <br/>
-			<div id="quantity-plus" class="button plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
-			<div id="quantity-minus" class="button plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
-		</div>
-		
-		<div id="order-step">
-			<div id="step-button" class="button order">Next</div>
-			Next step: enter your address and payment info
-		</div>
-	</td>
-</tr>
-
-</table>
-
+    		<div id="order-step">
+    			<div id="step-button" class="btn btn-large btn-primary">Next</div>
+    			<p>Next step: enter your address and payment info</p>
+    		</div>
+        </div>
+    </div>
 </script>
 
 
 <script type="text/template" id="payment-template">
+    <div class="row">
+        <div class="span8">
+            <div class="row">
+                <div class="span8">
+                    <div id="delivery-message" class="alert alert-block">
+                    </div>
+                </div>
+            </div>
+                
+            <div class="row">
+                <div class="span4">
+                    <form class="form-horizontal" method="post">
+                        <fieldset>
+                            <div class="control-group">
+                                <label class="radio radio-label">
+                                    <input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
+                                </label>
+                                <label class="radio radio-label">
+                                    <input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Bike Delivery
+                                </label>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="delivery-address">Address</label>
+                                <div class="controls">
+                                    <input class="input" id="delivery-address" type="text" value="<%%= delivery_address %>">
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="user-name">Name</label>
+                                <div class="controls">
+                                    <input class="input"  id="user-name" type="text" value="<%%= user_name %>"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="user-phone">Phone</label>
+                                <div class="controls">
+                                    <input class="input" id="user-phone" type="text" value="<%%= user_phone %>"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="user-email">Email</label>
+                                <div class="controls">
+                                    <input class="input"  id="user-email" type="text" value="<%%= user_email %>"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="user-comment">Comment</label>
+                                <div class="controls">
+                                    <textarea class="input-large" id="user-comment" name="user-comment" rows="5" ><%%= user_comment%></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="span4">
+                        <div id="delivery">
+                            <div id="map-canvas"></div>
+                            <div id="message" style="display:none;">
+                                <div id="delivery-message">
+                                </div>
+                                <div id="distance-message">
+                                </div>
+                                <div id="distance-message-error" class="red">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="span4">
+            <p id="order-text" class="lead">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+    		<div class="well">
+    		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
+    		</div>
 
-<table id="table">
-
-<tr>
-	<td class="left-column">
-		<form method="post">
-			<ul class="form-ul">
-			<li>
-				<span class="form-label">Name</span>
-				<input id="user-name" name="user-name" type="text" placeholder="First and last name" value="<%%= user_name %>"/>
-				<span id="user-name-error" class="error-message"><%%= valid_fields["user_name"]%></span>
-			</li>
-			<li>
-				<span class="form-label">Email</span>
-				<input id="user-email" name="user-email" type="email" placeholder="banana@bread.com" value="<%%= user_email%>"/>
-				<span id="user-email-error" class="error-message"><%%= valid_fields["user_email"]%></span>
-			</li>
-			<li>
-				<span class="form-label">Comment</span>
-				<textarea id="user-comment" name="user-comment" rows="5" cols="50"><%%= user_comment%></textarea>
-			</li>
-			</ul>
-			
-			<input type="radio" name="delivery-type" value="pickup" <%%= delivery_type == 'pickup' ? 'checked' : '' %> /> Pickup
-			<br/>
-			<input type="radio" name="delivery-type" value="delivery" <%%= delivery_type == 'delivery' ? 'checked' : '' %> /> Bike Delivery
-			<div id="delivery-address" style="display:none;">
-				<ul class="form-ul">
-				<li>
-					<span class="form-label">Address</span>
-					<input id="street-address" type="text" value="<%%= delivery_address %>">
-					<span id="street-address-error" class="error-message"><%%= valid_fields["street_address"]%></span>
-				</li>
-				<li>
-					<span class="form-label">Phone #:</span>
-					<input id="user-phone" type="text" value=<%%= user_phone%>>
-					<span id="user-phone-error" class="error-message"><%%= valid_fields["user_phone"]%></span>
-				</li>
-				</ul>
-			</div>
-			<div id="delivery">
-				<div id="map-canvas"></div>
-				<div id="message">
-					<div id="delivery-message">
-					</div>
-					<div id="distance-message">
-					</div>
-					<div id="distance-message-error" class="red">
-					</div>
-				</div>
-			</div>
-		</form>
-	</td>
-	
-	<td class="right-column">
-		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
-		
-		<div id="order-step">
-			<div id="step-button" class="button order">Review</div>
-			Next step: confirm your order
-		</div>
-	</td>
-</tr>
-
-</table>
-
+    		<div id="order-step">
+    			<div id="step-button" class="btn btn-large btn-primary">Next</div>
+    			<p>Next step: confirm your order</p>
+    		</div>
+        </div>
+    </div>
 </script>
 
-
 <script type="text/template" id="review-template">
+    <div class="row">
+        <div class="span8">
+            <h2>Dear <%%=user_name%>,</h2>
+            <p class="lead">
+            <%%= delivery_type == 'pickup' ? 'Your banana bread is going to be ready by Saturday morning. Please pick it up at 51 Lower Simcoe from 9am to 1am.' : 'Your banana bread is going to be delivered on Saturday from 2pm to 7pm to the following address: '+'<div>'+delivery_address + '</div>' %> 
+            </p>
+            
+        </div>
+        <div class="span4">
+            <p id="order-text" class="lead">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+    		<div class="well">
+    		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
+    		</div>
 
-<table id="table">
-
-<tr>
-	<td class='left-column'>
-		<div id="review-info">
-			<h4>Dear <%%=user_name%>,</h4>
-			<p>Please review your order.</p>
-			<span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span></p>
-			
-			<p><%%= (delivery_type==="pickup") ? 
-				"Please, pick up your order during the day on the coming Saturday from 9:00 to 3:00"
-			   : "Your order is going to be delivered on the coming Saturday from 3:00 PM to 7:00 PM"
-			 %>
-			</p>
-			// Order number is <%%= order_id %>
-		</div>
-	</td>
-	
-	<td class='right-column'>
-		<span id="order-text">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</span>
-		<div id="order-step">
-		
-			<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
-				<div id="payment">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="encrypted" value="<%%= paypal_encrypted %>">
-					<input type="submit" class="button" value="Pay">
-									
-					<div>You will be redirected to PayPal</div>
-				</div>
-			</form>
-		</div>
-	</td>
-</tr>
-
-</table>
+    		<div id="order-step">
+    			<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+    				<div id="payment">
+    					<input type="hidden" name="cmd" value="_s-xclick">
+    					<input type="hidden" name="encrypted" value="<%%= paypal_encrypted %>">
+    					<input type="submit" class="btn btn-large btn-primary" value="Pay with PayPal">
+    					<p>You will be redirected to PayPal</p>
+    				</div>
+    			</form>
+    		</div>
+        </div>
+    </div>
 
 </script>

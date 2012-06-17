@@ -20,13 +20,13 @@ bread.initOrderBackbone = function() {
 			user_email: '',
 			user_comment: '',
 			user_phone: '',
-			valid_fields: {
-				"user_name": "",
-				"user_email": "",
-				"street_address": "",
-				"user_phone":""
+			form_fields_errors: {
+				"user-name": "",
+				"user-email": "",
+				"delivery-address": "",
+				"user-phone":""
 			},
-			is_order_valid: false
+			loaf_price: 15,
 		},
 		availableComponents: {
 		    "raisins": "http://images.wikia.com/recipes/images/8/82/Raisins.jpg",
@@ -74,26 +74,25 @@ bread.initOrderBackbone = function() {
 			components[c] = !components[c];
 			this.trigger("change");
 		},
-		saveOrder: function() {
-			//$.post("/orders", {quantity: model.quantity, is_delivery: delivery_type == 'delivery', })	
-			//curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
-			//<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
-			var model = this;
-						
-			//_.extend(model.attributes, {components_json: model.get("components").toJSON()});
-			$.ajax({url: "/orders", 
-				data: this.attributes,
-				type: 'POST',
-				dataType: 'json',
-				success: function(data) { 
-					alert("Success!"); 
-					model.setStep(3); 
-					model.setOrderId(data.order_id);
-					model.setPaypalEncrypted(data.paypal_encrypted_str);
-				},
-				error: function (xhr, status) { alert('Sorry, there was a problem!'); }
-			});
-		},
+    saveOrder: function() {
+      //$.post("/orders", {quantity: model.quantity, is_delivery: delivery_type == 'delivery', })	
+      //curl -d "txn_id=2H507847F71659449&order_id=1&payment_status=Completed" http://localhost:3000/payment_notifications
+      //<input type="hidden" name="notify_url" value=<%= payment_notifications_url%>> 
+      var model = this;
+      //_.extend(model.attributes, {components_json: model.get("components").toJSON()});
+      $.ajax({url: "/orders", 
+        data: this.attributes,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) { 
+          alert("Success!"); 
+          model.setStep(3); 
+          model.setOrderId(data.order_id);
+          model.setPaypalEncrypted(data.paypal_encrypted_str);
+        },
+        error: function (xhr, status) { alert('Sorry, there was a problem!'); }
+      });
+    },
 		orderText: function() {
 			var componentText = '',
 			    componentName = function(comp_name) {
@@ -167,7 +166,7 @@ bread.initOrderBackbone = function() {
 				//clear name bit
 				//return "";
 			//}
-			this.setErrorMessage("user_name", txt);
+			this.setErrorMessage("user-name", txt);
 			return txt === "";
 		},
 		isEmailValid: function(){
@@ -176,42 +175,46 @@ bread.initOrderBackbone = function() {
 			if (email ===""){
 				txt = "Email cannot be blank";
 			}else{
-				regex = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+/;
+				var regex = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+/;
 				if (!regex.test(email)){
 					txt =  "Email is invalid";
-				}else{
-					txt =  "";
 				}
 			}
-			this.setErrorMessage("user_email", txt);
+			this.setErrorMessage("user-email", txt);
 			return txt === "";
 		},
-		isPhoneValid: function(){
-			var txt = ""
-			if (this.get("delivery_type") !== "pickup"){
-				if (this.get("user_phone") === ""){
-					txt = "Please enter your phone number";
-				}
-			}
-			this.setErrorMessage("user_phone", txt);
-			return txt === "";
-		},
-		isAddressValid: function(){
-			var txt = "";
-			if (this.get("delivery_type") !== "pickup"){
-				if (this.get("delivery_address") === ""){
-					txt = "Please delivery address";
-				}else if (this.get("delivery_distance") > 4500){
-					txt = "Distance to your place is " + (+this.get("delivery_distance"))/1000 + "km. Please select our pick up option.";
-				}
-			}
-			this.setErrorMessage("street_address", txt);
-			return txt === "";
-		},
+    isPhoneValid: function(){
+      var txt = "";
+      //if (this.get("delivery_type") !== "pickup"){
+      var phone = this.get("user_phone");
+        if (phone === ""){
+          txt = "Please enter your phone number";
+        }else{
+          regex = /[0-9\-\+ ]/;
+          if (!regex.test(phone)){
+            txt = "Phone is invalid";
+          }
+        }
+      //}
+      this.setErrorMessage("user-phone", txt);
+      return txt === "";
+    },
+    isAddressValid: function(){
+      var txt = "";
+      if (this.get("delivery_type") !== "pickup"){
+        if (this.get("delivery_address") === ""){
+          txt = "Please enter delivery address";
+        }else if (this.get("delivery_distance") > 4500){
+          txt = "Distance to your place is " + Math.round((+this.get("delivery_distance"))/1000) + "km. Please select our pick up option.";
+        }
+      }
+      this.setErrorMessage("delivery-address", txt);
+      return txt === "";
+    },
 		setErrorMessage: function(field_name, txt){
-			var vf = this.get("valid_fields");
+			var vf = this.get("form_fields_errors");
 			vf[field_name] = txt;
-			this.set("valid_fields", vf, {silent: true});
+			this.set("form_fields_errors", vf, {silent: true});
 		},
 		isOrderValid: function(){
 			var name_valid = this.isNameValid();
@@ -289,33 +292,40 @@ bread.initOrderBackbone = function() {
 		},
 		updateDeliveryView: function(){
 			if(this.model.step() != 2) return;
-			$("#user-name").focus();
+			//$("#user-name").focus();
 			
 			var delivery_address = $("#delivery-address");
+			delivery_address.toggleClass("disabled");
 			var delivery_message;
 			if ( this.isPickup() ){
-				delivery_address.hide("slow");
+				//delivery_address.hide("slow");
+				delivery_address.attr("disabled", "disabled");
+				
 				this.home.circle.setMap(null);
 				this.deliveryMarker.setMap(null);
-				delivery_message = "Pickup from 1 to 9 pm";
+				delivery_message = "You can pick up your bread on Saturday from 9am to 1pm";
 			}else{
-				delivery_address.show("slow");
+				//delivery_address.show("slow");
+				delivery_address.removeAttr("disabled");
+				
 				this.home.circle.setMap(this.map);
 				this.deliveryMarker.setMap(this.map);
-				delivery_message = "Delivery from 9 am to 12 pm";
+				delivery_message = "I'll bike your order to your location on Saturday from 2pm to 7pm";
 			}
 			$("#delivery-message").text(delivery_message);
 		},
-		breadCrumbsHandler: function(event){
-			var crumb = $(event.target);
-			if (crumb.hasClass('enabled') && !crumb.hasClass('active')){
-				var step = this.extractStepFromString(crumb.text());
-				if (this.model.step() === 2){
-					//validateForm();
-				}
-				this.model.setStep(step);
-			}
-		},
+    breadCrumbsHandler: function(event){
+      var crumb = $(event.target);
+      if (crumb.hasClass('enabled') && !crumb.hasClass('active')){
+        var step = this.extractStepFromString(crumb.text());
+        if (this.model.step() === 2 && step ===3){
+          this.step2Action();
+        }else{
+          this.clearPopovers();
+          this.model.setStep(step);
+        }
+      }
+    },
 		plusButtonHandler: function(){
 			this.model.increaseQuantity();
 		},
@@ -326,24 +336,43 @@ bread.initOrderBackbone = function() {
 			var component = $(event.target).attr("alt");
 			this.model.updateComponent(component);
 		},
-		stepButtonHandler: function(){
-			if (this.model.step() == 2){
-				// if (this.model.deliveryType() === "delivery"){
-				// 					var dist = this.model.deliveryDistance();
-				// 					if(dist > 4500 ){
-				// 						$('#distance-message-error').text("Distance is "+dist +". Too far to bike");
-				// 						return;
-				// 					}
-				// 				};
-				if (this.model.isOrderValid()){
-					this.model.saveOrder();
-				}else{
-					this.render();
-				}
-			}else{
-				this.model.setStep(this.model.step()+1);
-			}
-		},
+		clearPopovers: function(){
+		  _.each(this.model.attributes.form_fields_errors, function(error_message, field_name){
+          var fld = $("#"+field_name);
+          fld.popover("hide");
+      });
+    },
+    step2Action: function(){
+      if (this.model.isOrderValid()){
+        this.clearPopovers();
+        this.model.saveOrder();
+      }else{
+        var popoverOptions={
+          placement: "right",
+          trigger: "manual",
+        }
+        _.each(this.model.attributes.form_fields_errors, function(error_message, field_name){
+          var fld = $("#"+field_name);
+          fld.popover(popoverOptions);
+          if (error_message !== ""){
+            fld.data("popover").options.content = error_message;
+            fld.popover("show");
+            fld.parent().parent().addClass("error");
+          }else{
+            fld.popover("hide");
+            fld.parent().parent().removeClass("error");
+          }
+        })
+      }
+    },
+    stepButtonHandler: function(){
+      if (this.model.step() == 2){
+        this.step2Action();
+      }else{
+        this.clearPopovers();
+        this.model.setStep(this.model.step()+1);
+      }
+    },
 		extractStepFromString: function(str){
 			return +str.substring(str.length-1);
 		},
@@ -385,7 +414,7 @@ bread.initOrderBackbone = function() {
 		},
 		placeDeliveryMarker: function(){
 			if ( this.isPickup() ) return;
-			var address = $('#street-address').val();
+			var address = $('#delivery-address').val();
 			if(!address) return;
 			this.model.setDeliveryAddress(address);
 			address += ' toronto ontario canada';

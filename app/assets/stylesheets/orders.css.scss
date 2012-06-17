@@ -2,14 +2,16 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-@import "buttons";
+//@import "buttons";
 @import "bootstrap";
 
 body {
   background-color: #fff;
   background-image:url('page_bg_tile.jpg');
   color: #333;
-  font-family: "Trebuchet MS", verdana, arial, helvetica, sans-serif;
+  
+  //font-family: "Trebuchet MS", verdana, arial, helvetica, sans-serif;
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
   font-size: 14px;
 }
 
@@ -17,17 +19,23 @@ body {
 	width: 960px;	
 	margin: 10px auto 10px;
 	position: relative; 
-	background: grey;
+	background: #fff;//#f0dab1;
 	padding: 10px;
+	
+	-moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
 }
 
 #bread-crumbs{
 	font-size: 200%;
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 	cursor: default;
+	height: 26px;
+	border-bottom: 2px solid #d6b28c;
 	span {
 		&.active{
-			font-weight: bold;
+      border-bottom: 2px solid #000;
 		}
 		
 		&.enabled{
@@ -35,53 +43,28 @@ body {
 		}
 		
 		&.disabled{
-			color: #AAA;
+			color: #d6b28c;//#AAA;
 		}
 	}
 }
 
-$content-height: 400px;
-
-#table{
-	border-collapse:collapse;
-	width: 100%;
-	
-	tr {
-		//border: 1px solid black;
-	}
-	
-	td.left-column{
-		//width: 70%;
-		display: block;
-		//min-height: 150px;
-		position: relative;
-		padding: 0 20px 0 0;
-		vertical-align:top;
-		//line-height: 140%;
-		background: #CCC;
-	}
-	
-	td.right-column{
-		width: 25%;
-		background: #EEE;
-		color: #444;
-		padding: 10px;
-		vertical-align: top;
-	}
+.sidebar{
+  color: #000;
 }
+
+$content-height: 350px;
 
 #bread-image{
 	height: $content-height;
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-position: center center;
+	background-position: left center;
 	background-image: url('http://2.bp.blogspot.com/_gLGOsirSkHc/TMi5OkI98RI/AAAAAAAANmQ/b20iE_IH3Yk/s1600/sliced%20banana%20bread.jpg');
 }
 
 .component-image{
 	max-height: 100px;
 	max-width: 100px;
-	//display: inline-block;
 	opacity: 0.4;
 	cursor: pointer;
 	
@@ -94,47 +77,10 @@ $content-height: 400px;
 	font-weight: bold;
 }
 
-#quantity-control{
-	margin-top: 100px;
-}
-
-.button{
-	@include button;
-	@include rounded(5px);
-//	@include shadow;
-	@include gradient(#4D8CCD, #3372B4);
-	color: white;
-	font-size: 200%;
-	font-weight: bold;
-	
-	line-height: 2em;
-	opacity: 1;
-	
-	&:hover{
-		@include gradient(#3289B2, #297192);
-	}
-	
-	&:active{
-		@include shadow_inset;
-	}
-	
-	&.plus-minus{
-		padding: 0;
-		width: 2em;
-		height: 2em;
-	}
-	
-	&.order{
-		height: 2em;
-	}
-	
-	&.disabled{
-		opacity: 0.4;
-	}
-}
-
 #order-step{
-	margin-top: 100px;
+	#margin-top: 200px;
+	position:absolute;
+	bottom: 0;
 }
 
 .clearfix:after {
@@ -147,46 +93,79 @@ $content-height: 400px;
 }
 
 #delivery{
-	height: 300px;
+	height: 250px;
 }
 
 #map-canvas{
 	float: left;
-	width: 49%;
+	width: 100%;
 	height: 100%;
 }
 
-#message{
-	float: right;
-	width: 49%;
-	height: 70%;
-	background: #cdcdcd;
-	border: 1px dashed;
-	border-radius: 5px;
-	text-align: right;
+.control-group {
+  .control-label{
+    width: 50px;
+  }
+  
+  .controls{
+    margin-left: 70px;
+  }
 }
 
-.red{
-	color:red;
+.radio-label{
+  display: inline-block;
+  width: 100px;
+  font-size:16px;
+  font-weight:200;
+  margin-left:5px;
 }
 
-.error-message{
-	color:red;
+p{
+  label{
+    display: inline;
+    font-size: 20px;
+    font-weight: 200;
+  }
+  
+  &.quantity{
+    margin: 10px;
+    font-weight:bold;
+  }
 }
 
-.form-ul{
-	text-align:left;
-	list-style-type:none;
-	padding: 1px;
+.form-horizontal .control-group {
+margin-bottom: 5px;
 }
 
-.form-label{
-	display: inline-block;
-	width:80px;
-	vertical-align:top;
+.plus-minus{
+  font-family: Courier;
+  margin: 3px 0px 3px 0px;
 }
 
-textarea{
-	resize: none;
-	overflow:hidden;
+// popover restyle
+.popover-title{
+  display: none;
+}
+
+.popover-content{
+  padding: 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.popover-inner{
+  padding: 1px;
+  background: #B94A48;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.popover.right .arrow{
+  border-right-color: #B94A48;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  vertical-align: middle;
 }
