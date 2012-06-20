@@ -1,4 +1,6 @@
 class OrderMailer < ActionMailer::Base
+  add_template_helper(ApplicationHelper)
+  
   MY_EMAIL = "masha.ku@gmail.com"
   default from: MY_EMAIL
   

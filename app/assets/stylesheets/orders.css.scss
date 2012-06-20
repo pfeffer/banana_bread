@@ -11,8 +11,8 @@ body {
   color: #333;
   
   //font-family: "Trebuchet MS", verdana, arial, helvetica, sans-serif;
-  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
-  font-size: 14px;
+  font-family: "Lato", "Helvetica Neue", helvetica, arial, sans-serif;
+  font-size: 17px;
 }
 
 #wrap{
@@ -33,6 +33,7 @@ body {
 	cursor: default;
 	height: 26px;
 	border-bottom: 2px solid #d6b28c;
+	line-height:10px;
 	span {
 		&.active{
       border-bottom: 2px solid #000;
@@ -52,7 +53,7 @@ body {
   color: #000;
 }
 
-$content-height: 350px;
+$content-height: 300px;
 
 #bread-image{
 	height: $content-height;
@@ -62,15 +63,22 @@ $content-height: 350px;
 	background-image: url('http://2.bp.blogspot.com/_gLGOsirSkHc/TMi5OkI98RI/AAAAAAAANmQ/b20iE_IH3Yk/s1600/sliced%20banana%20bread.jpg');
 }
 
+$component-image-width: 80px;
 .component-image{
-	max-height: 100px;
-	max-width: 100px;
+	height: $component-image-width;
+	width: $component-image-width;
 	opacity: 0.4;
 	cursor: pointer;
 	
 	&.selected{
 		opacity: 1;
 	}
+}
+
+.component-title{
+  display:inline-block;
+	width: $component-image-width;
+	text-align:center;
 }
 
 .selected-component{
@@ -121,6 +129,7 @@ $content-height: 350px;
 }
 
 p{
+  font-family: "Lato", "Helvetica Neue", helvetica, arial, sans-serif;
   label{
     display: inline;
     font-size: 20px;
@@ -168,4 +177,8 @@ margin-bottom: 5px;
 
 [class^="icon-"], [class*=" icon-"] {
   vertical-align: middle;
+}
+
+#filler{
+  height:110px;
 }

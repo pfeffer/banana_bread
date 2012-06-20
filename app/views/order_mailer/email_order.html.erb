@@ -9,7 +9,7 @@
     <p>
 		Thank you for placing an order with us!
 		
-		You ordered Banana Bread <%= get_components_str_from_order(@order) %>.
+		You ordered Banana Bread <%= get_components_str_from_order(@order).html_safe %>.
 		Your order # <%= @order.id %> is going to be delivered soon.		
     </p>
   </body>

@@ -40,7 +40,7 @@ class Order < ActiveRecord::Base
        :item_name => 'Banana bread',
        :quantity => self.quantity,
        :amount => BREAD_PRICE, #APP_CONFIG[:price] * quantity,
-       :currency_code => 'CAD',
+       :currency_code => 'US',
        :invoice => self.id,
        :rm => 0,
        #:button_subtype => 'services',
@@ -60,10 +60,12 @@ class Order < ActiveRecord::Base
   end
    
   def get_selected_components
+    components = []
     components.push('raisins') && self.raisins
     components.push('chocolate chips') && self.chocolate_chips
     components.push('walnuts') && self.walnuts
     components.push('flax seeds') && self.flax_seeds
     components.push('cinnamon') && self.cinnamon
+    return components
   end
 end

@@ -26,6 +26,10 @@
                     <%% _.each(availableComponents, function(url, name) { %>
                         <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
                     <%% }); %>
+                    <br/>
+                    <%% _.each(availableComponents, function(url, name) { %>
+                        <span class="component-title"><%%=name%></span>
+                    <%% }); %>
                 </div>
                 <div class="span1">
                     <div id="quantity-plus" class="btn btn-primary plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
@@ -37,7 +41,7 @@
         
         <div class="span4">
             <div class="sidebar">
-                <p id="order-text" class="lead">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+                <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
         		<div class="well">
         		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
         		</div>
@@ -123,7 +127,7 @@
             </div>
         </form>
         <div class="span4">
-            <p id="order-text" class="lead">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+            <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
     		<div class="well">
     		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
     		</div>
@@ -146,11 +150,11 @@
             
         </div>
         <div class="span4">
-            <p id="order-text" class="lead">You are about to order <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+            <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
     		<div class="well">
     		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
     		</div>
-
+            <div id="filler"></div>
     		<div id="order-step">
     			<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
     				<div id="payment">
