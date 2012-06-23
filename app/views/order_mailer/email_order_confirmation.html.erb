@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <style type="text/css" media="screen">
+        p { 
+            font-size: 14;
+        }
+        .selected-component{
+        	font-weight: bold;
+        }
+    </style>
+  </head>
+  <body>
+    <h3>Hello <%= @order.user_name %>,</h3>
+    
+    <p>
+        Thank you for placing an order with us! 
+    </p>
+    <p>
+        You ordered <%= @order.quantity %> banana bread <%=get_quantity_text(@order) %> <%= get_components_str_from_order(@order).html_safe %>. We will send you a reminder about your pickup or delivery time.
+    </p>
+    <p>
+        If you have any questions, please don't hesitate to email me at <a href="mailto:masha.ku@gmail.com">masha.ku@gmail.com</a>
+        <br/><br/>
+        Masha
+    </p>
+  </body>
+</html>

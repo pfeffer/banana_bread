@@ -8,7 +8,7 @@ class PaymentNotification < ActiveRecord::Base
       if status == "Completed"
         order.update_attribute(:purchased_at, Time.now)
         
-        OrderMailer.email_order(order)
+        OrderMailer.email_order_confirmation(order)
       end
     end
 end

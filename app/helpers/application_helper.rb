@@ -25,5 +25,7 @@ module ApplicationHelper
     return "<span class='selected-component'>" + comp_name + "</span>"
   end
   
-  
+  def get_quantity_text(order)
+    return order.quantity == 1 ? "loaf" : "loaves";
+  end
 end

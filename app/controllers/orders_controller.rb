@@ -53,19 +53,12 @@ class OrdersController < ApplicationController
       @order = Order.create!( raisins: comps['raisins'] == 'true', chocolate_chips: comps['chocolate_chips'] == 'true', walnuts: comps['walnuts'] == 'true', flax_seeds: comps['flax seeds'], cinnamon: comps['cinnamon'],
         is_delivery: is_delivery, delivery_address: delivery_address, quantity: quantity, 
         user_name: user_name, user_email: user_email, user_phone: user_phone, user_comment: user_comment)
+      
+      OrderMailer.email_order(@order)
     
       #render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, payment_notifications_url)}
       render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, 'http://marakujja.zapto.org/payment_notifications')}
     
-      # respond_to do |format|
-      #       if @order.save
-      #         format.html { redirect_to @order, notice: 'Order was successfully created.' }
-      #         format.json { render json: @order, status: :created, location: @order }
-      #       else
-      #         format.html { render action: "new" }
-      #         format.json { render json: @order.errors, status: :unprocessable_entity }
-      #       end
-      #     end
     end
   end
 

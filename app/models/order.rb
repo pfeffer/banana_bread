@@ -7,7 +7,7 @@ class Order < ActiveRecord::Base
   APP_CERT_PEM = File.read("#{Rails.root}/certs/app_cert.pem")
   APP_KEY_PEM = File.read("#{Rails.root}/certs/app_key.pem")
   
-  BREAD_PRICE = 15
+  BREAD_PRICE = 0.1
   DELIVERY_PRICE = 5
   
   def paypal_form(return_url, notify_url)
@@ -34,20 +34,20 @@ class Order < ActiveRecord::Base
   def encrypt_paypal(return_url, notify_url)
     #24.212.225.107
     values = {
-       :business => 'mkmk_1335799555_biz@mail.ru',
+       #:business => 'mkmk_1335799555_biz@mail.ru', #dev env
+       :business => 'pfeffer@mail.ru',
        :cmd => '_xclick',
        #:business => '7UWLEGTUETVWL',
        :item_name => 'Banana bread',
        :quantity => self.quantity,
        :amount => BREAD_PRICE, #APP_CONFIG[:price] * quantity,
-       :currency_code => 'US',
+       :currency_code => 'CAD',
        :invoice => self.id,
        :rm => 0,
-       #:button_subtype => 'services',
-       #:bn => "PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted",
        :return => return_url,
        :notify_url => notify_url,
-       :cert_id => 'Q676RQJ8RDHWY'
+       #:cert_id => 'Q676RQJ8RDHWY' # dev env
+       :cert_id => 'F3A7K59B9XF6W'
      }
      y values
      

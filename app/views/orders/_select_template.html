@@ -2,9 +2,9 @@
 
 <div id="row">
     <div id="bread-crumbs">
-    	<span id='step1' class="<%%= step == 1 ? 'active' : '' %> enabled">Step 1</span> <i class="icon-arrow-right"></i>
-    	<span id='step2' class="<%%= step == 2 ? 'active' : '' %><%%= max_step >= 2 ? ' enabled' : ' disabled' %>">Step 2</span> <i class="icon-arrow-right"></i> 
-    	<span id='step3' class="<%%= step == 3 ? 'active' : '' %><%%= max_step >= 3 ? ' enabled' : ' disabled' %>">Step 3</span>
+    	<span id='step1' class="<%%= step == 1 ? 'active' : '' %> enabled">1. Create</span> <i class="icon-arrow-right"></i>
+    	<span id='step2' class="<%%= step == 2 ? 'active' : '' %><%%= max_step >= 2 ? ' enabled' : ' disabled' %>">2. Delivery</span> <i class="icon-arrow-right"></i> 
+    	<span id='step3' class="<%%= step == 3 ? 'active' : '' %><%%= max_step >= 3 ? ' enabled' : ' disabled' %>">3. Review</span>
     </div>
 </div>
     
@@ -13,44 +13,50 @@
 <script type="text/template" id="select-template">
     <div class="row">
         <div class="span8">
-            <div class="row">
-                <div class="span8">
-                    <div class="alert alert-block">
-                        Place an order for delicious banana bread with your choice of ingredients and if you can't pick up your goodies at my location, I'll bike it right to you (within 5 km from the CN-tower).
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span7">
-                    <div id="bread-image"></div>
-                    <%% _.each(availableComponents, function(url, name) { %>
-                        <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
-                    <%% }); %>
-                    <br/>
-                    <%% _.each(availableComponents, function(url, name) { %>
-                        <span class="component-title"><%%=name%></span>
-                    <%% }); %>
-                </div>
-                <div class="span1">
-                    <div id="quantity-plus" class="btn btn-primary plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
-                    <p class="quantity"><%%= quantity%></p>
-                    <div id="quantity-minus" class="btn btn-primary plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
-                </div>
+            <%% _.each(availableComponents, function(url, name) { %>
+                <span class="component-title"><%%=name%></span>
+            <%% }); %>
+            <br/>
+            <%% _.each(availableComponents, function(url, name) { %>
+                <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
+            <%% }); %>
+            <div id="bread-image"></div>
+            <div style="margin: 10px;">
+                <span class="lead">
+                    How many loaves would you like?    <span id="qty"><%%= quantity%></span>
+                </span>
+                    <div id="quantity-plus" class="btn btn-mini btn-warning plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
+                    <div id="quantity-minus" class="btn btn-mini btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
             </div>
         </div>
         
         <div class="span4">
-            <div class="sidebar">
-                <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
-        		<div class="well">
-        		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
-        		</div>
-    		</div>
+            <div>
+                <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> banana bread <strong><%%= loaf %></strong><span id="order-components"><%%= order_text %></span>.</p>
+                <p>
+                    <strong>Pickup location</strong>
+                    <br/>
+                    51 Lower Simcoe: Sat-Sun (10am-3pm)
+                </p>
+                <p>
+                    <strong>Delivery</strong>
+                    <br/>
+                    Sat-Sun (4pm-7pm): $5
+                </p>
+                <p>
+                    <strong>Contact me</strong>
+                    <br/>
+                    <a href="mailto:masha.ku@gmail.com">masha.ku@gmail.com</a>
+                    <br/>
+                    (647) 830-43-00
+                </p>
+                
+            </div>
 
-    		<div id="order-step">
-    			<div id="step-button" class="btn btn-large btn-primary">Next</div>
-    			<p>Next step: enter your address and payment info</p>
-    		</div>
+            <div id="order-step">
+                <div id="step-button" class="btn btn-large btn-warning">Next</div>
+                <p>Next step: choose how you&apos;d like to get your bread</p>
+            </div>
         </div>
     </div>
 </script>
@@ -105,7 +111,7 @@
                             <div class="control-group">
                                 <label class="control-label" for="user-comment">Comment</label>
                                 <div class="controls">
-                                    <textarea class="input-large" id="user-comment" name="user-comment" rows="5" ><%%= user_comment%></textarea>
+                                    <textarea class="input-large" id="user-comment" name="user-comment" rows="9" placeholder="Please let me know when you want to get your order!"><%%= user_comment%></textarea>
                                 </div>
                             </div>
                         </fieldset>
@@ -127,15 +133,39 @@
             </div>
         </form>
         <div class="span4">
-            <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
-    		<div class="well">
-    		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
-    		</div>
+            <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> banana bread <strong><%%= loaf %></strong><span id="order-components"><%%= order_text %></span>.</p>
+            <div class="well">
+                <div class="row-fluid show-grid">
+                    <div class="span8"><%%= quantity%> banana bread <%%= " " + loaf %></div>
+                    <div class="span4"> $<%%= loaf_price%></div>
+                </div>
+                <div id="delivery-price" class="row-fluid show-grid">
+                    <div class="span8">Delivery</div>
+                    <div class="span4"> $<%%= delivery_price%></div>
+                </div>
+                <hr/>
+                <div class="row-fluid show-grid">
+                    <div class="span8">Total</div>
+                    <div id="total" class="span4">
+                        = $<%%= loaf_price * quantity + (delivery_type == 'pickup' ? 0 : delivery_price) %>
+                    </div>
+                </div>
+            </div>
+            <p>
+                <strong>Pickup location</strong>
+                <br/>
+                51 Lower Simcoe: Sat-Sun (10am-3pm)
+            </p>
+            <p>
+                <strong>Delivery</strong>
+                <br/>
+                Sat-Sun (4pm-7pm): $5
+            </p>
 
-    		<div id="order-step">
-    			<div id="step-button" class="btn btn-large btn-primary">Next</div>
-    			<p>Next step: confirm your order</p>
-    		</div>
+            <div id="order-step">
+                <div id="step-button" class="btn btn-large btn-warning">Next</div>
+                <p>Next step: review your order</p>
+            </div>
         </div>
     </div>
 </script>
@@ -151,17 +181,39 @@
         </div>
         <div class="span4">
             <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
-    		<div class="well">
-    		    $<%%= loaf_price %> * <%%= quantity%> = $<%%= loaf_price * quantity %>
-    		</div>
-            <div id="filler"></div>
-    		<div id="order-step">
-    			<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+            <div class="well">
+                <div class="row-fluid show-grid">
+                    <div class="span8"><%%= quantity%> banana bread <%%= " " + loaf %></div>
+                    <div class="span4"> $<%%= loaf_price%></div>
+                </div>
+                <div id="delivery-price" class="row-fluid show-grid">
+                    <div class="span8">Delivery</div>
+                    <div class="span4"> $<%%= delivery_price%></div>
+                </div>
+                <hr/>
+                <div class="row-fluid show-grid">
+                    <div class="span8">Total</div>
+                    <div id="total" class="span4">
+                        = $<%%= loaf_price * quantity + (delivery_type == 'pickup' ? 0 : delivery_price) %>
+                    </div>
+                </div>
+            </div>
+            <p>
+                <strong>Pickup location</strong>
+                <br/>
+                51 Lower Simcoe: Sat-Sun (10am-3pm)
+            </p>
+            <p>
+                <strong>Delivery</strong>
+                <br/>
+                Sat-Sun (4pm-7pm): $5
+            </p>    		<div id="order-step">
+    			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
     				<div id="payment">
     					<input type="hidden" name="cmd" value="_s-xclick">
     					<input type="hidden" name="encrypted" value="<%%= paypal_encrypted %>">
-    					<input type="submit" class="btn btn-large btn-primary" value="Pay with PayPal">
-    					<p>You will be redirected to PayPal</p>
+    					<input type="submit" class="btn btn-large btn-warning" value="Pay with PayPal">
+    					<!--<p>You will be redirected to PayPal</p>--!>
     				</div>
     			</form>
     		</div>

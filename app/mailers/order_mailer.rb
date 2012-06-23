@@ -6,7 +6,12 @@ class OrderMailer < ActionMailer::Base
   
   def email_order(order)
     @order = order
+    mail(to: MY_EMAIL, subject: "Bananza order \#"+@order.id.to_s+" created").deliver
+  end
+  
+  def email_order_confirmation(order)
+    @order = order
     
-    mail(to: [order.user_email, MY_EMAIL], subject: "Order confirmation for Banana Bread").deliver
+    mail(to: [order.user_email, MY_EMAIL], subject: "Order \#"+@order.id.to_s+" confirmation for Banana Bread").deliver
   end
 end

@@ -27,13 +27,14 @@ bread.initOrderBackbone = function() {
 				"user-phone":""
 			},
 			loaf_price: 15,
+			delivery_price: 5
 		},
 		availableComponents: {
-		    "raisins": "http://images.wikia.com/recipes/images/8/82/Raisins.jpg",
-		    "chocolate chips": "http://www.cocktailfiesta.com/wp-content/uploads/2012/02/chocolate-chips.jpg",
+		    "raisins": "http://dl.dropbox.com/u/8229568/apps/bread/raisins.jpg",
+		    "chocolate chips": "http://dl.dropbox.com/u/8229568/apps/bread/walnuts.jpg",
 		    "walnuts": "http://www.naturalhealth365.com/images/walnuts.jpg",
-		    "flax seeds": "http://everyoungshop.com/images/isimages/BW6212.jpg",
-		    "cinnamon": "http://www.7daykickstartdiet.com/wp-content/uploads/2011/05/cinnamonhealthbenefits.jpg"
+		    "flax seeds": "http://dl.dropbox.com/u/8229568/apps/bread/flax-seeds.jpg",
+		    "cinnamon": "http://dl.dropbox.com/u/8229568/apps/bread/cinnamon.jpg"
 		},
 		initialize: function() {},
 		step: function() {
@@ -67,7 +68,7 @@ bread.initOrderBackbone = function() {
 			this.set('quantity', q);
 		},
 		quantityText: function(){
-			return this.quantity() == 1 ? "loaf" : "loaves";
+      return this.quantity() == 1 ? "loaf" : "loaves";
 		},
 		updateComponent: function(c){
 			var components = this.get("components");
@@ -225,6 +226,12 @@ bread.initOrderBackbone = function() {
 			return name_valid && email_valid && phone_valid && address_valid;
 			//return order_validity_mask == 0
 		},
+    loafPrice: function(){
+      return this.get('loaf_price');
+    },
+    deliveryPrice: function(){
+      return this.get('delivery_price');
+    }
 	});
 
 	bread.OrderView = Backbone.View.extend({
@@ -290,30 +297,34 @@ bread.initOrderBackbone = function() {
 			this.model.setDeliveryType($(event.target).val());
 			this.updateDeliveryView();
 		},
-		updateDeliveryView: function(){
-			if(this.model.step() != 2) return;
-			//$("#user-name").focus();
-			
-			var delivery_address = $("#delivery-address");
-			delivery_address.toggleClass("disabled");
-			var delivery_message;
-			if ( this.isPickup() ){
-				//delivery_address.hide("slow");
-				delivery_address.attr("disabled", "disabled");
-				
-				this.home.circle.setMap(null);
-				this.deliveryMarker.setMap(null);
-				delivery_message = "You can pick up your bread on Saturday from 9am to 1pm";
-			}else{
-				//delivery_address.show("slow");
-				delivery_address.removeAttr("disabled");
-				
-				this.home.circle.setMap(this.map);
-				this.deliveryMarker.setMap(this.map);
-				delivery_message = "I'll bike your order to your location on Saturday from 2pm to 7pm";
-			}
-			$("#delivery-message").text(delivery_message);
-		},
+    updateDeliveryView: function(){
+      if(this.model.step() != 2) return;
+      //$("#user-name").focus();
+      
+      var delivery_address = $("#delivery-address");
+      var delivery_price = $("#delivery-price");
+      var total = this.model.loafPrice() * this.model.quantity();
+      delivery_address.toggleClass("disabled");
+      var delivery_message;
+      if ( this.isPickup() ){
+        delivery_price.hide();
+        delivery_address.attr("disabled", "disabled");
+        
+        this.home.circle.setMap(null);
+        this.deliveryMarker.setMap(null);
+        delivery_message = "You can pick up your bread on Saturday from 9am to 1pm";
+      }else{
+        delivery_price.show();
+        delivery_address.removeAttr("disabled");
+        total += this.model.deliveryPrice();
+        
+        this.home.circle.setMap(this.map);
+        this.deliveryMarker.setMap(this.map);
+        delivery_message = "I'll bike your order to your location on Saturday from 2pm to 7pm";
+      }
+      $("#total").text(" $"+total);
+      $("#delivery-message").text(delivery_message);
+    },
     breadCrumbsHandler: function(event){
       var crumb = $(event.target);
       if (crumb.hasClass('enabled') && !crumb.hasClass('active')){
@@ -373,10 +384,11 @@ bread.initOrderBackbone = function() {
         this.model.setStep(this.model.step()+1);
       }
     },
-		extractStepFromString: function(str){
-			return +str.substring(str.length-1);
-		},
-		initializeMapIfExists: function(){
+    extractStepFromString: function(str){
+      //return +str.substring(str.length-1);
+      return +str.substring(0,1);
+    },
+    initializeMapIfExists: function(){
 			var map_div = $('#map-canvas')[0];
 			if (!map_div) return;
 			//this.myAddress = "51 lower simcoe, toronto, on";
@@ -412,7 +424,7 @@ bread.initOrderBackbone = function() {
 			if (!this.distanceService) this.distanceService = new google.maps.DistanceMatrixService();
 			
 		},
-		placeDeliveryMarker: function(){
+    placeDeliveryMarker: function(){
 			if ( this.isPickup() ) return;
 			var address = $('#delivery-address').val();
 			if(!address) return;
@@ -460,7 +472,7 @@ bread.initOrderBackbone = function() {
 				}
 			});
 		},
-		addressChangeHandler: function(){
+    addressChangeHandler: function(){
 			//stop timer
 			if(this.inputTimer){
 				clearTimeout(this.inputTimer)
@@ -474,8 +486,8 @@ bread.initOrderBackbone = function() {
 			
 			this.inputTimer = setTimeout(timerCallback, 1000);
 		},
-		userNameChangeHandler: function(){
-			this.model.setUserName($("#user-name").val());
+    userNameChangeHandler: function(){
+      this.model.setUserName($("#user-name").val());
 		},
 		userEmailChangeHandler: function(){
 			this.model.setUserEmail($("#user-email").val());

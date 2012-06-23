@@ -7,8 +7,8 @@
 
 body {
   background-color: #fff;
-  background-image:url('page_bg_tile.jpg');
-  color: #333;
+  background-image:url('page_bg_tile1.jpg');
+  color: #222;
   
   //font-family: "Trebuchet MS", verdana, arial, helvetica, sans-serif;
   font-family: "Lato", "Helvetica Neue", helvetica, arial, sans-serif;
@@ -16,7 +16,8 @@ body {
 }
 
 #wrap{
-	width: 960px;	
+	width: 940px;	
+	height: 600px;
 	margin: 10px auto 10px;
 	position: relative; 
 	background: #fff;//#f0dab1;
@@ -37,6 +38,7 @@ body {
 	span {
 		&.active{
       border-bottom: 2px solid #000;
+      font-weight: 800;
 		}
 		
 		&.enabled{
@@ -49,11 +51,18 @@ body {
 	}
 }
 
-.sidebar{
+a {
   color: #000;
 }
 
-$content-height: 300px;
+#footer{
+  height: 30px;
+  text-align: center;
+  width: 100%;
+  margin: 10px 0 8px 0;
+}
+
+$content-height: 350px;
 
 #bread-image{
 	height: $content-height;
@@ -61,17 +70,21 @@ $content-height: 300px;
 	background-repeat: no-repeat;
 	background-position: left center;
 	background-image: url('http://2.bp.blogspot.com/_gLGOsirSkHc/TMi5OkI98RI/AAAAAAAANmQ/b20iE_IH3Yk/s1600/sliced%20banana%20bread.jpg');
+	margin: 1px;
 }
 
-$component-image-width: 80px;
+$component-image-width: 100px;
 .component-image{
 	height: $component-image-width;
 	width: $component-image-width;
 	opacity: 0.4;
 	cursor: pointer;
-	
+	border: none;
+	margin: 1px;
 	&.selected{
+	  margin: 0px;
 		opacity: 1;
+		border: 1px solid #aaa;
 	}
 }
 
@@ -79,6 +92,10 @@ $component-image-width: 80px;
   display:inline-block;
 	width: $component-image-width;
 	text-align:center;
+}
+
+#order-text{
+  height: 117px;
 }
 
 .selected-component{
@@ -101,7 +118,7 @@ $component-image-width: 80px;
 }
 
 #delivery{
-	height: 250px;
+	height: 335px;
 }
 
 #map-canvas{
@@ -134,11 +151,6 @@ p{
     display: inline;
     font-size: 20px;
     font-weight: 200;
-  }
-  
-  &.quantity{
-    margin: 10px;
-    font-weight:bold;
   }
 }
 
@@ -179,6 +191,22 @@ margin-bottom: 5px;
   vertical-align: middle;
 }
 
-#filler{
-  height:110px;
+.alert{
+  background-color: #fff;
+}
+
+.row-fluid .span4 {
+  text-align: right;
+}
+
+#qty{
+  display: inline-block;
+  width: 30px;
+  margin: 0 0 0 15px;
+  border: 1px solid #777;
+  text-align: center;
+}
+
+hr{
+  margin: 5px 0;
 }

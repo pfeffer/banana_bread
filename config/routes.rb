@@ -8,6 +8,8 @@ Bread::Application.routes.draw do
   resources :payment_notifications
   
   match 'thank_you',  to: 'static_pages#thank_you'
+  match 'about',  to: 'static_pages#about'
+  match 'contacts', to: 'static_pages#contacts'
   
   match 'paypal_encrypt' => "orders#paypal_encrypt", :via => [:get, :post]
   

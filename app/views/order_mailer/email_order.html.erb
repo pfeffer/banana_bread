@@ -2,15 +2,63 @@
 <html>
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <style type="text/css" media="screen">
+           p { 
+               font-size: 14;
+           }
+           table{
+               border: 1px solid #600;
+           }
+           td{
+               border: 1px solid #600;
+           }
+       </style>
   </head>
   <body>
-    <h1>Welcome to bananabread.com, <%= @order.user_name %></h1>
+    <h3>You got an order# <%= @order.id %>!</h3>
     
+    <table>
+        <tr>
+            <td>Delivery/Pickup</td>
+            <td><%= @order.is_delivery == true ? "Address:" + @order.delivery_address : "Pickup"%></td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td><%= @order.user_name%></td>
+        </tr>
+        <tr>
+            <td>Phone</td>
+            <td><%= @order.user_phone%></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td><a href="<%= @order.user_email%>"><%= @order.user_email%></a></td>
+        </tr>
+        <tr>
+            <td>Comment</td>
+            <td><%= @order.user_comment%></td>
+        </tr>
+        
+    </table>
+    <h4>Order content:</h4>
     <p>
-		Thank you for placing an order with us!
-		
-		You ordered Banana Bread <%= get_components_str_from_order(@order).html_safe %>.
-		Your order # <%= @order.id %> is going to be delivered soon.		
+        Quantity: <%= @order.quantity%>
     </p>
+    <table>
+        <tr>
+            <td>Raisins</td>
+            <td>Chocolate Chips</td>
+            <td>Walnuts</td>
+            <td>Flax seeds</td>
+            <td>Cinnamon</td>
+        </tr>
+        <tr>
+            <td><%= @order.raisins == true ? "YES": "" %></td>
+            <td><%= @order.chocolate_chips == true ? "YES": "" %></td>
+            <td><%= @order.walnuts == true ? "YES": "" %></td>
+            <td><%= @order.flax_seeds == true ? "YES": "" %></td>
+            <td><%= @order.cinnamon == true ? "YES": "" %></td>
+        </tr>
+    <p>
   </body>
 </html>
