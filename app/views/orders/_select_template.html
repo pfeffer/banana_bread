@@ -22,17 +22,16 @@
             <%% }); %>
             <div id="bread-image"></div>
             <div style="margin: 10px;">
-                <span class="lead">
-                    How many loaves would you like?    <span id="qty"><%%= quantity%></span>
-                </span>
-                    <div id="quantity-plus" class="btn btn-mini btn-warning plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
-                    <div id="quantity-minus" class="btn btn-mini btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
+                <span class="lead"> How many loaves would you like?</span>
+                <div id="quantity-plus" class="btn btn-warning plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
+                <span id="qty"><%%= quantity%></span>
+                <div id="quantity-minus" class="btn btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
             </div>
         </div>
         
         <div class="span4">
             <div>
-                <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> banana bread <strong><%%= loaf %></strong><span id="order-components"><%%= order_text %></span>.</p>
+                <p id="order-text" class="lead">You are ordering <strong><%%= quantity %></strong> banana bread <%%= loaf %><span id="order-components"><%%= order_text %></span>.</p>
                 <p>
                     <strong>Pickup location</strong>
                     <br/>
@@ -133,7 +132,7 @@
             </div>
         </form>
         <div class="span4">
-            <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> banana bread <strong><%%= loaf %></strong><span id="order-components"><%%= order_text %></span>.</p>
+            <p id="order-text" class="lead">You are ordering <strong><%%= quantity %></strong> banana bread <%%= loaf %><span id="order-components"><%%= order_text %></span>.</p>
             <div class="well">
                 <div class="row-fluid show-grid">
                     <div class="span8"><%%= quantity%> banana bread <%%= " " + loaf %></div>
@@ -180,7 +179,7 @@
             
         </div>
         <div class="span4">
-            <p id="order-text" class="lead">You are ordering <span id="order-quantity"><%%= quantity %></span> Banana bread <span id="order-loaf"><%%= loaf %></span><span id="order-components"><%%= order_text %></span>.</p>
+            <p id="order-text" class="lead">You are ordering <strong><%%= quantity %></strong> Banana bread <%%= loaf %><span id="order-components"><%%= order_text %></span>.</p>
             <div class="well">
                 <div class="row-fluid show-grid">
                     <div class="span8"><%%= quantity%> banana bread <%%= " " + loaf %></div>

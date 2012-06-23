@@ -30,11 +30,11 @@ bread.initOrderBackbone = function() {
 			delivery_price: 5
 		},
 		availableComponents: {
-		    "raisins": "http://dl.dropbox.com/u/8229568/apps/bread/raisins.jpg",
-		    "chocolate chips": "http://dl.dropbox.com/u/8229568/apps/bread/walnuts.jpg",
-		    "walnuts": "http://www.naturalhealth365.com/images/walnuts.jpg",
-		    "flax seeds": "http://dl.dropbox.com/u/8229568/apps/bread/flax-seeds.jpg",
-		    "cinnamon": "http://dl.dropbox.com/u/8229568/apps/bread/cinnamon.jpg"
+		    "raisins": "./assets/raisins.jpg",
+		    "chocolate chips": "./assets/chocolate-chips.jpg",
+		    "walnuts": "./assets/walnuts.jpg",
+		    "flax seeds": "./assets/flax-seeds.jpg",
+		    "cinnamon": "./assets/cinnamon.jpg"
 		},
 		initialize: function() {},
 		step: function() {
