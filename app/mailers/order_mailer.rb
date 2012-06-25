@@ -1,12 +1,12 @@
 class OrderMailer < ActionMailer::Base
   add_template_helper(ApplicationHelper)
   
-  MY_EMAIL = "masha.ku@gmail.com"
+  MY_EMAIL = "info@sweetbread.ca"
   default from: MY_EMAIL
   
   def email_order(order)
     @order = order
-    mail(to: MY_EMAIL, subject: "Bananza order \#"+@order.id.to_s+" created").deliver
+    mail(to: MY_EMAIL, subject: "Sweet bread order \#"+@order.id.to_s+" created").deliver
   end
   
   def email_order_confirmation(order)

@@ -23,9 +23,9 @@
             <div id="bread-image"></div>
             <div style="margin: 10px;">
                 <span class="lead"> How many loaves would you like?</span>
-                <div id="quantity-plus" class="btn btn-warning plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
+                <div id="quantity-minus" class="btn btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>                
                 <span id="qty"><%%= quantity%></span>
-                <div id="quantity-minus" class="btn btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>
+                <div id="quantity-plus" class="btn btn-warning plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
             </div>
         </div>
         
@@ -45,7 +45,7 @@
                 <p>
                     <strong>Contact me</strong>
                     <br/>
-                    <a href="mailto:masha.ku@gmail.com">masha.ku@gmail.com</a>
+                    <a href="mailto:info@sweetbread.ca">info@sweetbread.ca</a>
                     <br/>
                     (647) 830-43-00
                 </p>
@@ -185,10 +185,12 @@
                     <div class="span8"><%%= quantity%> banana bread <%%= " " + loaf %></div>
                     <div class="span4"> $<%%= loaf_price%></div>
                 </div>
-                <div id="delivery-price" class="row-fluid show-grid">
-                    <div class="span8">Delivery</div>
-                    <div class="span4"> $<%%= delivery_price%></div>
-                </div>
+                <%% if(delivery_type != 'pickup'){ %>
+                    <div id="delivery-price" class="row-fluid show-grid">
+                        <div class="span8">Delivery</div>
+                        <div class="span4"> $<%%= delivery_price%></div>
+                    </div>
+                <%% } %>
                 <hr/>
                 <div class="row-fluid show-grid">
                     <div class="span8">Total</div>

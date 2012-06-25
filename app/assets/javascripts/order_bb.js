@@ -86,7 +86,7 @@ bread.initOrderBackbone = function() {
         type: 'POST',
         dataType: 'json',
         success: function(data) { 
-          alert("Success!"); 
+          //alert("Success!"); 
           model.setStep(3); 
           model.setOrderId(data.order_id);
           model.setPaypalEncrypted(data.paypal_encrypted_str);
@@ -186,7 +186,6 @@ bread.initOrderBackbone = function() {
 		},
     isPhoneValid: function(){
       var txt = "";
-      //if (this.get("delivery_type") !== "pickup"){
       var phone = this.get("user_phone");
         if (phone === ""){
           txt = "Please enter your phone number";
@@ -196,7 +195,6 @@ bread.initOrderBackbone = function() {
             txt = "Phone is invalid";
           }
         }
-      //}
       this.setErrorMessage("user-phone", txt);
       return txt === "";
     },
@@ -224,7 +222,6 @@ bread.initOrderBackbone = function() {
 			var address_valid = this.isAddressValid();
 			
 			return name_valid && email_valid && phone_valid && address_valid;
-			//return order_validity_mask == 0
 		},
     loafPrice: function(){
       return this.get('loaf_price');

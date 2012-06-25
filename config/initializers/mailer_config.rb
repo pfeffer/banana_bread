@@ -3,6 +3,7 @@
 ActionMailer::Base.smtp_settings = {
   :address              => "smtp.gmail.com",
   :port                 => 587,
+  :domain               => "sweetbread.ca",
   :user_name            => ENV['BREAD_EMAIL_USERNAME'],#APP_CONFIG['email_username'],
   :password             => ENV['BREAD_EMAIL_PASSWORD'],#APP_CONFIG['email_password'],
   :authentication       => 'plain',

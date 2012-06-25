@@ -56,9 +56,7 @@ class OrdersController < ApplicationController
       
       OrderMailer.email_order(@order)
     
-      #render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, payment_notifications_url)}
-      render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, 'http://marakujja.zapto.org/payment_notifications')}
-    
+      render :json => {order_id: @order.id, paypal_encrypted_str: @order.encrypt_paypal(thank_you_url, payment_notifications_url)}
     end
   end
 
