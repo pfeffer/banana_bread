@@ -250,7 +250,13 @@ bread.initOrderBackbone = function() {
 			_.extend(json, {
 			    loaf: this.model.quantityText(),
 			    order_text: this.model.orderText(),
-			    availableComponents: this.model.availableComponents
+			    availableComponents: this.model.availableComponents,
+			    myAddress: "228 Queens Quay W.",
+			    pickupTimeTxt: "Sat - Sun (10am - 3pm)",
+			    deliveryTimeTxt: "Sat - Sun (4pm - 7pm)",
+			    deliveryPrice: this.model.deliveryPrice(),
+			    myEmail: "info@sweetbread.ca",
+			    myPhone: "(647) 830 - 4300"
 			});
 			var stepTemplate = null;
 			
@@ -390,7 +396,7 @@ bread.initOrderBackbone = function() {
 			if (!map_div) return;
 			//this.myAddress = "51 lower simcoe, toronto, on";
 			//create map
-			var myLatLng = new google.maps.LatLng(43.64225,-79.383591);
+			var myLatLng = new google.maps.LatLng(43.6395961, -79.3835943);
 			var options = {
 				center: myLatLng,
 				zoom: 12,

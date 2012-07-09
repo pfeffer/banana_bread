@@ -16,16 +16,20 @@ body {
 }
 
 #wrap{
-	width: 940px;	
-	height: 560px;
-	margin: 10px auto 10px;
-	position: relative; 
-	background: #fff;//#f0dab1;
-	padding: 30px;
-	
-	-moz-border-radius: 4px;
+  width: 940px;	
+  min-height: 560px;
+  margin: 10px auto 10px;
+  position: relative; 
+  background: #fff;//#f0dab1;
+  padding: 30px;
+  
+  -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  
+  box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.2);
 }
 
 #bread-crumbs{
@@ -62,26 +66,40 @@ a {
   margin: 10px 0 8px 0;
 }
 
-$content-height: 350px;
-
 #bread-image{
-	height: $content-height;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: left center;
-	background-image: url('http://2.bp.blogspot.com/_gLGOsirSkHc/TMi5OkI98RI/AAAAAAAANmQ/b20iE_IH3Yk/s1600/sliced%20banana%20bread.jpg');
-	margin: 1px;
+  margin: 10px auto;
+  display: block;
+  background-image: url('bread.jpg');
+  
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
 }
 
-$component-image-width: 100px;
+.components{
+  text-align: center;
+}
+
+.component{
+  display: inline-block;
+  padding: 0 10px;
+  margin: 1px;
+  
+  &:hover{
+    border: 1px solid #ccc;
+    margin: 0;
+  };
+}
+
+$component-image-width: 90px;
 .component-image{
-	height: $component-image-width;
-	width: $component-image-width;
-	opacity: 0.4;
-	cursor: pointer;
-	&.selected{
-		opacity: 1;
-	}
+  height: $component-image-width;
+  width: $component-image-width;
+  opacity: 0.4;
+  cursor: pointer;
+  &.selected{
+    opacity: 1;
+  }
 }
 
 .component-title{

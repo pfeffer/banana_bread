@@ -22,8 +22,8 @@
 			var markersArray = [];
 
 			$(document).ready(function(){
-				var my_address = "51 lower simcoe, toronto, on"
-				var myLatLng = new google.maps.LatLng(43.64225,-79.383591);
+				var my_address = "228 Queens Quay, Toronto, on"
+				var myLatLng = new google.maps.LatLng(43.6395961, -79.3835943);
 				$("#my_address").val(my_address);
 				$("#their_address").val("10 dundas east, toronto, on");
 

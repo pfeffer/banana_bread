@@ -13,14 +13,18 @@
 <script type="text/template" id="select-template">
     <div class="row">
         <div class="span8">
+            <div class="components">
             <%% _.each(availableComponents, function(url, name) { %>
-                <span class="component-title"><%%=name%></span>
+                <div class="component">
+                    <span class="component-title"><%%=name%></span>
+                    <br/>
+                    <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
+                </div>
             <%% }); %>
-            <br/>
-            <%% _.each(availableComponents, function(url, name) { %>
-                <img alt="<%%= name %>" src="<%%= url %>" class="component-image<%%= components[name] ? ' selected' : '' %>"/>
-            <%% }); %>
-            <div id="bread-image"></div>
+            </div>
+            <div style="height: 400px">
+                <img src="assets/bread.jpg" id="bread-image"/>
+            </div>
             <div style="margin: 10px;">
                 <span class="lead"> How many loaves would you like?</span>
                 <div id="quantity-minus" class="btn btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>                
@@ -35,19 +39,19 @@
                 <p>
                     <strong>Pickup location</strong>
                     <br/>
-                    51 Lower Simcoe: Sat-Sun (10am-3pm)
+                    <%%= myAddress %>: <%%= pickupTimeTxt %>
                 </p>
                 <p>
                     <strong>Delivery</strong>
                     <br/>
-                    Sat-Sun (4pm-7pm): $5
+                    <%%= deliveryTimeTxt%>: $<%%= deliveryPrice%>
                 </p>
                 <p>
                     <strong>Contact me</strong>
                     <br/>
-                    <a href="mailto:info@sweetbread.ca">info@sweetbread.ca</a>
+                    <a href="mailto:<%%= myEmail %>"><%%= myEmail %></a>
                     <br/>
-                    (647) 830-43-00
+                    <%%= myPhone %>
                 </p>
                 
             </div>
@@ -153,12 +157,19 @@
             <p>
                 <strong>Pickup location</strong>
                 <br/>
-                51 Lower Simcoe: Sat-Sun (10am-3pm)
+                <%%= myAddress %>: <%%= pickupTimeTxt %>
             </p>
             <p>
                 <strong>Delivery</strong>
                 <br/>
-                Sat-Sun (4pm-7pm): $5
+                <%%= deliveryTimeTxt%>: $<%%= deliveryPrice%>
+            </p>
+            <p>
+                <strong>Contact me</strong>
+                <br/>
+                <a href="mailto:<%%= myEmail %>"><%%= myEmail %></a>
+                <br/>
+                <%%= myPhone %>
             </p>
 
             <div id="order-step">
@@ -202,13 +213,21 @@
             <p>
                 <strong>Pickup location</strong>
                 <br/>
-                51 Lower Simcoe: Sat-Sun (10am-3pm)
+                <%%= myAddress %>: <%%= pickupTimeTxt %>
             </p>
             <p>
                 <strong>Delivery</strong>
                 <br/>
-                Sat-Sun (4pm-7pm): $5
-            </p>    		<div id="order-step">
+                <%%= deliveryTimeTxt%>: $<%%= deliveryPrice%>
+            </p>
+            <p>
+                <strong>Contact me</strong>
+                <br/>
+                <a href="mailto:<%%= myEmail %>"><%%= myEmail %></a>
+                <br/>
+                <%%= myPhone %>
+            </p>
+            <div id="order-step">
     			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
     				<div id="payment">
     					<input type="hidden" name="cmd" value="_s-xclick">
