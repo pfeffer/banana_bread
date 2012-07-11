@@ -21,7 +21,7 @@ body {
   margin: 10px auto 10px;
   position: relative; 
   background: #fff;//#f0dab1;
-  padding: 30px;
+  padding: 25px;
   
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -103,9 +103,10 @@ $component-image-width: 90px;
 }
 
 .component-title{
-  display:inline-block;
+  display: inline-block;
 	width: $component-image-width;
-	text-align:center;
+	text-align: center;
+	height: 36px;
 }
 
 #order-text{

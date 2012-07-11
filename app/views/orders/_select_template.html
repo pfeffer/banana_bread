@@ -30,6 +30,7 @@
                 <div id="quantity-minus" class="btn btn-warning plus-minus <%%= quantity == 1 ? 'disabled' : '' %>">-</div>                
                 <span id="qty"><%%= quantity%></span>
                 <div id="quantity-plus" class="btn btn-warning plus-minus <%%= quantity == 3 ? 'disabled' : '' %> ">+</div>
+                <div><h5><small>I am still the only queen in my kitchen, so you can order a maximum of 3 loaves.</small><h5></div>
             </div>
         </div>
         
@@ -114,7 +115,7 @@
                             <div class="control-group">
                                 <label class="control-label" for="user-comment">Comment</label>
                                 <div class="controls">
-                                    <textarea class="input-large" id="user-comment" name="user-comment" rows="9" placeholder="Please let me know when you want to get your order!"><%%= user_comment%></textarea>
+                                    <textarea class="input-large" id="user-comment" name="user-comment" rows="9" placeholder="Please let me know when you would like to get your order!"><%%= user_comment%></textarea>
                                 </div>
                             </div>
                         </fieldset>
@@ -122,14 +123,6 @@
                     <div class="span4">
                         <div id="delivery">
                             <div id="map-canvas"></div>
-                            <div id="message" style="display:none;">
-                                <div id="delivery-message">
-                                </div>
-                                <div id="distance-message">
-                                </div>
-                                <div id="distance-message-error" class="red">
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,6 +166,7 @@
             </p>
 
             <div id="order-step">
+                <div id="spinner" style="display: none;"><img src="assets/loading.gif"/></div>
                 <div id="step-button" class="btn btn-large btn-warning">Next</div>
                 <p>Next step: review your order</p>
             </div>
@@ -185,7 +179,7 @@
         <div class="span8">
             <h2>Dear <%%=user_name%>,</h2>
             <p class="lead">
-            <%%= delivery_type == 'pickup' ? 'Your banana bread is going to be ready by Saturday morning. Please pick it up at 51 Lower Simcoe from 9am to 1am.' : 'Your banana bread is going to be delivered on Saturday from 2pm to 7pm to the following address: '+'<div>'+delivery_address + '</div>' %> 
+            <%%= delivery_type == 'pickup' ? 'Your banana bread is going to be ready soon. Please pick it up on the upcoming weekend at 228 Queens Quay from 10am to 3pm.' : 'Your banana bread is going to be delivered on the upcoming weekend any time from 4pm to 7pm to the following address: '+'<div>'+delivery_address + '</div>' %> 
             </p>
             
         </div>

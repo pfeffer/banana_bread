@@ -90,8 +90,9 @@ bread.initOrderBackbone = function() {
           model.setStep(3); 
           model.setOrderId(data.order_id);
           model.setPaypalEncrypted(data.paypal_encrypted_str);
+          $("#spinner").hide();
         },
-        error: function (xhr, status) { alert('Sorry, there was a problem!'); }
+        error: function (xhr, status) { alert('Sorry, there was a problem. Try again!'); $("#spinner").hide();}
       });
     },
 		orderText: function() {
@@ -203,6 +204,8 @@ bread.initOrderBackbone = function() {
       if (this.get("delivery_type") !== "pickup"){
         if (this.get("delivery_address") === ""){
           txt = "Please enter delivery address";
+        }else if (this.get("delivery_distance") === -1){
+          txt = "Please enter valid address for Toronto";
         }else if (this.get("delivery_distance") > 4500){
           txt = "Distance to your place is " + Math.round((+this.get("delivery_distance"))/1000) + "km. Please select our pick up option.";
         }
@@ -228,6 +231,9 @@ bread.initOrderBackbone = function() {
     },
     deliveryPrice: function(){
       return this.get('delivery_price');
+    },
+    formFieldsErrors: function(){
+      return this.get('form_fields_errors');
     }
 	});
 
@@ -261,25 +267,27 @@ bread.initOrderBackbone = function() {
 			var stepTemplate = null;
 			
 			switch(this.model.step()) {
-				case 1:
-					stepTemplate = this.selectTemplate(json);
-					break;
-				case 2:
-					stepTemplate = this.paymentTemplate(json);
-					break;
-				case 3:
-					stepTemplate = this.reviewTemplate(json);
-					break;
-			}
-			
-			$(this.el).html(this.breadCrumbsTemplate(json));
-			$(this.el).append(stepTemplate);
-			
-			this.initializeMapIfExists();
-			this.placeDeliveryMarker();
-			this.updateDeliveryView();
-		},
-		
+        case 1:
+          stepTemplate = this.selectTemplate(json);
+          break;
+        case 2:
+          stepTemplate = this.paymentTemplate(json);
+          break;
+        case 3:
+          stepTemplate = this.reviewTemplate(json);
+          break;
+        }
+      
+      $(this.el).html(this.breadCrumbsTemplate(json));
+      $(this.el).append(stepTemplate);
+      
+      this.initializeMapIfExists();
+      this.initializePopovers();
+      
+      this.updateDeliveryView();
+      //this.placeDeliveryMarker();
+    },
+    
 		events: {
 			"click #bread-crumbs span": "breadCrumbsHandler",
 			"click #quantity-plus": "plusButtonHandler",
@@ -302,7 +310,8 @@ bread.initOrderBackbone = function() {
 		},
     updateDeliveryView: function(){
       if(this.model.step() != 2) return;
-      //$("#user-name").focus();
+      
+      this.placeDeliveryMarker();
       
       var delivery_address = $("#delivery-address");
       var delivery_price = $("#delivery-price");
@@ -315,7 +324,7 @@ bread.initOrderBackbone = function() {
         
         this.home.circle.setMap(null);
         this.deliveryMarker.setMap(null);
-        delivery_message = "You can pick up your bread on Saturday from 9am to 1pm";
+        delivery_message = "You can pick up your bread on the upcoming weekend from 10am to 3pm";
       }else{
         delivery_price.show();
         delivery_address.removeAttr("disabled");
@@ -323,7 +332,7 @@ bread.initOrderBackbone = function() {
         
         this.home.circle.setMap(this.map);
         this.deliveryMarker.setMap(this.map);
-        delivery_message = "I'll bike your order to your location on Saturday from 2pm to 7pm";
+        delivery_message = "I'll bike your order to your location on the upcoming weekend from 4pm to 7pm";
       }
       $("#total").text(" $"+total);
       $("#delivery-message").text(delivery_message);
@@ -359,15 +368,16 @@ bread.initOrderBackbone = function() {
     step2Action: function(){
       if (this.model.isOrderValid()){
         this.clearPopovers();
+        $("#spinner").show();
         this.model.saveOrder();
       }else{
-        var popoverOptions={
-          placement: "right",
-          trigger: "manual",
-        }
-        _.each(this.model.attributes.form_fields_errors, function(error_message, field_name){
+        // var popoverOptions={
+        //           placement: "right",
+        //           trigger: "manual",
+        //         }
+        _.each(this.model.formFieldsErrors(), function(error_message, field_name){
           var fld = $("#"+field_name);
-          fld.popover(popoverOptions);
+          // fld.popover(popoverOptions);
           if (error_message !== ""){
             fld.data("popover").options.content = error_message;
             fld.popover("show");
@@ -380,7 +390,7 @@ bread.initOrderBackbone = function() {
       }
     },
     stepButtonHandler: function(){
-      if (this.model.step() == 2){
+      if (this.model.step() === 2){
         this.step2Action();
       }else{
         this.clearPopovers();
@@ -394,7 +404,6 @@ bread.initOrderBackbone = function() {
     initializeMapIfExists: function(){
 			var map_div = $('#map-canvas')[0];
 			if (!map_div) return;
-			//this.myAddress = "51 lower simcoe, toronto, on";
 			//create map
 			var myLatLng = new google.maps.LatLng(43.6395961, -79.3835943);
 			var options = {
@@ -411,70 +420,105 @@ bread.initOrderBackbone = function() {
 				position: myLatLng
 			});
 			
-			var circleParams = {
-//				map: this.map,
-				radius: 4000,
-				fillColor: '#0000FF', 
-				strokeColor: '#0011FF',
-				strokeWeight: 0.5,
-				center: myLatLng
-			};
-			
-			this.home.circle = new google.maps.Circle(circleParams);
-			
-			//create delivery marker
-			if (!this.deliveryMarker) this.deliveryMarker = new google.maps.Marker({});
-			if (!this.distanceService) this.distanceService = new google.maps.DistanceMatrixService();
-			
-		},
+      var circleParams = {
+        radius: 4000,
+        fillColor: '#0000FF', 
+        strokeColor: '#0011FF',
+        strokeWeight: 0.5,
+        center: myLatLng
+      };
+      
+      this.home.circle = new google.maps.Circle(circleParams);
+      
+      //create delivery marker
+      if (!this.deliveryMarker) this.deliveryMarker = new google.maps.Marker({});
+      if (!this.distanceService) this.distanceService = new google.maps.DistanceMatrixService();
+      
+    },
+    initializePopovers: function(){
+      if (this.model.step() === 2){
+        var popoverOptions={
+          placement: "right",
+          trigger: "manual",
+        }
+        _.each(this.model.formFieldsErrors(), function(error_message, field_name){
+          var fld = $("#"+field_name);
+          fld.popover(popoverOptions);
+        });
+      }
+    },
     placeDeliveryMarker: function(){
-			if ( this.isPickup() ) return;
-			var address = $('#delivery-address').val();
-			if(!address) return;
-			this.model.setDeliveryAddress(address);
-			address += ' toronto ontario canada';
-			
-			if(!this.geocoder) this.geocoder = new google.maps.Geocoder();
-			$('delivery-message-error').val('');
-			
-			var model = this.model;
-			var map = this.map;
-			var deliveryMarker = this.deliveryMarker;
-			var homeMarker = this.home.marker;
-			var distanceService = this.distanceService;
-			this.geocoder.geocode({'address': address}, function(results, status){
-				if (status == google.maps.GeocoderStatus.OK){
-					//bounds.extend(results[0].geometry.location);
-					//map.fitBounds(bounds);
-					deliveryMarker.setPosition(results[0].geometry.location);
-					deliveryMarker.setMap(map);
-					
-					distanceService.getDistanceMatrix({
-						origins: [homeMarker.getPosition()],
-						destinations: [deliveryMarker.getPosition()],
-						travelMode: google.maps.TravelMode.DRIVING,
-						avoidHighways: true,
-						avoidTolls: true
-					}, function(response, status){
-						if (status == google.maps.DistanceMatrixStatus.OK){
-							var origins = response.originAddresses;
-							var destinations = response.destinationAddresses;
-							for (var i=0; i< origins.length; i++){
-								var rows = response.rows[i];
-								for (var j=0; j<destinations.length; j++)
-								{
-									var element = rows.elements[j];
-									if (element.status == google.maps.DistanceMatrixStatus.OK){
-										$("#distance-message").text("Distance:" + element.distance.text);
-										model.setDeliveryDistance(element.distance.value);
-									}
-								}
-							}
-						}
-					});
-				}
-			});
-		},
+      var addressInput = $("#delivery-address");
+      if (this.isPickup()){
+        addressInput.popover("hide");
+        addressInput.parent().parent().removeClass("error");
+        return;
+      } 
+      var address = addressInput.val();
+      if (!address) return;
+      this.model.setDeliveryAddress(address);
+      //address += ' toronto ontario';
+      
+      if(!this.geocoder) this.geocoder = new google.maps.Geocoder();
+      var model = this.model;
+      var map = this.map;
+      var deliveryMarker = this.deliveryMarker;
+      var homeMarker = this.home.marker;
+      var distanceService = this.distanceService;
+      var isCanadaFound = false;
+      this.geocoder.geocode({'address': address, region: "ca"}, function(results, status){
+        if (status == google.maps.GeocoderStatus.OK || results.length > 0){
+          
+          for (var j=0; j<results.length && !isCanadaFound; j++){
+            //var regex = /\w*Toronto.* ON .* Canada/;
+            var regex = /\w* ON .* Canada/;
+            if (regex.test(results[j].formatted_address)){
+              isCanadaFound = true;
+            }
+            console.log(results[j].formatted_address);
+          }
+          if (isCanadaFound){
+            deliveryMarker.setPosition(results[j-1].geometry.location);
+            console.log(results.length+ "j: "+j);
+          
+            deliveryMarker.setMap(map);
+          
+            distanceService.getDistanceMatrix({
+              origins: [homeMarker.getPosition()],
+              destinations: [deliveryMarker.getPosition()],
+              travelMode: google.maps.TravelMode.DRIVING,
+              avoidHighways: true,
+              avoidTolls: true
+            }, function(response, status){
+              if (status == google.maps.DistanceMatrixStatus.OK){
+                var origins = response.originAddresses;
+                var destinations = response.destinationAddresses;
+                for (var i=0; i< origins.length; i++){
+                  var rows = response.rows[i];
+                  for (var j=0; j<destinations.length; j++)
+                  {
+                    var element = rows.elements[j];
+                    if (element.status == google.maps.DistanceMatrixStatus.OK){
+                      //$("#distance-message").text("Distance:" + element.distance.text);
+                      model.setDeliveryDistance(element.distance.value);
+                    }
+                  }
+                }
+              }
+            });
+            addressInput.popover("hide");
+            addressInput.parent().parent().removeClass("error");
+          }
+        }
+        if (!isCanadaFound){
+          //address is not proper
+          addressInput.data("popover").options.content = "Please enter valid address for Toronto";
+          addressInput.popover("show");
+          addressInput.parent().parent().addClass("error");
+          model.setDeliveryDistance(-1);
+        }
+      });
+    },
     addressChangeHandler: function(){
 			//stop timer
 			if(this.inputTimer){
