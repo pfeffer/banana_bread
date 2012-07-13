@@ -68,11 +68,11 @@ class Order < ActiveRecord::Base
    
   def get_selected_components
     components = []
-    components.push('raisins') && self.raisins
-    components.push('chocolate chips') && self.chocolate_chips
-    components.push('walnuts') && self.walnuts
-    components.push('flax seeds') && self.flax_seeds
-    components.push('cinnamon') && self.cinnamon
+    components << 'raisins' if self.raisins
+    components << 'chocolate chips' if self.chocolate_chips
+    components << 'walnuts' if self.walnuts
+    components << 'flax seeds' if self.flax_seeds
+    components << 'cinnamon' if self.cinnamon
     return components
   end
 end
